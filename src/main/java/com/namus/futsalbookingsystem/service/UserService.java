@@ -1,8 +1,6 @@
 package com.namus.futsalbookingsystem.service;
 
-import com.namus.futsalbookingsystem.entity.Admin;
 import com.namus.futsalbookingsystem.entity.AuthResult;
-import com.namus.futsalbookingsystem.entity.AuthResultForAdmin;
 import com.namus.futsalbookingsystem.entity.User;
 
 public interface UserService{
@@ -10,9 +8,9 @@ public interface UserService{
     public AuthResult findUserByPhoneAndPassword(User user);
     public String changePassword(User user);
 
-    public String saveAdmin(Admin admin);
+    public String saveAdmin(User user);
 
-    public AuthResultForAdmin findAdminByPhoneAndPassword(Admin admin);
+   
 
 }
 

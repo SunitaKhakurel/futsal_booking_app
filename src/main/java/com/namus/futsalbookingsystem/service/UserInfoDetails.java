@@ -1,7 +1,6 @@
 package com.namus.futsalbookingsystem.service;
 
 
-import com.namus.futsalbookingsystem.entity.Admin;
 import com.namus.futsalbookingsystem.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

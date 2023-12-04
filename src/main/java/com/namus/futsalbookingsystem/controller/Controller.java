@@ -117,15 +117,15 @@ public class Controller {
     //Admin
 
     @PostMapping("/addNewAdmin")
-    public ResponseEntity<ApiResponse> addNewAdmin(@RequestBody Admin admin) {
+    public ResponseEntity<ApiResponse> addNewAdmin(@RequestBody User user) {
         try {
-            List<User> list= userRepository.findByPhone(admin.getPhone());
+            List<User> list= userRepository.findByPhone(user.getPhone());
             if(!list.isEmpty()){
                 ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
 
-            service.saveAdmin(admin);
+            service.saveAdmin(user);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         }catch(ValidationException v) {
@@ -138,26 +138,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/loginAdmin")
-    public ResponseEntity<?> loginAdmin(@RequestBody Admin admin) {
-        try {
-            AuthResultForAdmin authResult = service.findAdminByPhoneAndPassword(admin);
-            List<Admin> adminList = authResult.getUsers();
 
-            if (adminList != null && !adminList.isEmpty()) {
-                String token = jwtService.generateToken(adminList.get(0).getUserName());
-                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), List.of(token));
-                return ResponseEntity.ok(apiResponse);
-            } else {
-                ApiResponse apiResponse = new ApiResponse(authResult.getMessage(), HttpStatus.UNAUTHORIZED.value());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiResponse);
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // Add this line to print the exception stack trace
-            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
-        }
-    }
     @GetMapping("/hello")
     @PreAuthorize("hasAuthority('User')")
     public String hello(){

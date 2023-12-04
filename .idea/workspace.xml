@@ -2,27 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fb804000-6115-4421-993f-93b2c7c75731" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/Admin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/AuthResultForAdmin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/Role.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/repository/AdminRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/futsalbookingsystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/futsalbookingsystem.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/controller/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/filter/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/filter/JwtAuthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/repository/FutsalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/repository/FutsalRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/Admin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/entity/AuthResultForAdmin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/repository/AdminRepository.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/UserInfoDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/UserInfoDetails.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/namus/futsalbookingsystem/service/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/config/SecurityConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/controller/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/controller/Controller.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/entity/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/filter/JwtAuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/filter/JwtAuthFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/repository/UserRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/JwtService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/JwtService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/entity/Admin.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/entity/AuthResultForAdmin.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/repository/AdminRepository.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/UserInfoDetails.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/UserInfoDetails.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/UserService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/namus/futsalbookingsystem/service/UserServiceImpl.class" afterDir="false" />
@@ -125,7 +116,7 @@
       <workItem from="1701615662764" duration="976000" />
       <workItem from="1701667496580" duration="4947000" />
       <workItem from="1701675373104" duration="1117000" />
-      <workItem from="1701680712156" duration="707000" />
+      <workItem from="1701680712156" duration="2841000" />
     </task>
     <servers />
   </component>
@@ -153,26 +144,26 @@
       <screen x="0" y="0" width="1536" height="816" />
     </state>
     <state x="435" y="154" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1536.816@0.0.1536.816" timestamp="1699425086464" />
-    <state x="436" y="100" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1701670336458">
+    <state x="436" y="100" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1701683322936">
       <screen x="0" y="0" width="1536" height="816" />
     </state>
-    <state x="436" y="100" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.816@0.0.1536.816" timestamp="1701670336458" />
-    <state width="1481" height="3" key="GridCell.Tab.0.bottom" timestamp="1701673196456">
+    <state x="436" y="100" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.816@0.0.1536.816" timestamp="1701683322936" />
+    <state width="1481" height="114" key="GridCell.Tab.0.bottom" timestamp="1701683342123">
       <screen x="0" y="0" width="1536" height="816" />
     </state>
-    <state width="1481" height="3" key="GridCell.Tab.0.bottom/0.0.1536.816@0.0.1536.816" timestamp="1701673196456" />
-    <state width="1481" height="3" key="GridCell.Tab.0.center" timestamp="1701673196456">
+    <state width="1481" height="114" key="GridCell.Tab.0.bottom/0.0.1536.816@0.0.1536.816" timestamp="1701683342123" />
+    <state width="1481" height="114" key="GridCell.Tab.0.center" timestamp="1701683342123">
       <screen x="0" y="0" width="1536" height="816" />
     </state>
-    <state width="1481" height="3" key="GridCell.Tab.0.center/0.0.1536.816@0.0.1536.816" timestamp="1701673196456" />
-    <state width="1481" height="3" key="GridCell.Tab.0.left" timestamp="1701673196456">
+    <state width="1481" height="114" key="GridCell.Tab.0.center/0.0.1536.816@0.0.1536.816" timestamp="1701683342123" />
+    <state width="1481" height="114" key="GridCell.Tab.0.left" timestamp="1701683342123">
       <screen x="0" y="0" width="1536" height="816" />
     </state>
-    <state width="1481" height="3" key="GridCell.Tab.0.left/0.0.1536.816@0.0.1536.816" timestamp="1701673196456" />
-    <state width="1481" height="3" key="GridCell.Tab.0.right" timestamp="1701673196456">
+    <state width="1481" height="114" key="GridCell.Tab.0.left/0.0.1536.816@0.0.1536.816" timestamp="1701683342123" />
+    <state width="1481" height="114" key="GridCell.Tab.0.right" timestamp="1701683342123">
       <screen x="0" y="0" width="1536" height="816" />
     </state>
-    <state width="1481" height="3" key="GridCell.Tab.0.right/0.0.1536.816@0.0.1536.816" timestamp="1701673196456" />
+    <state width="1481" height="114" key="GridCell.Tab.0.right/0.0.1536.816@0.0.1536.816" timestamp="1701683342123" />
     <state x="0" y="0" key="Maven.ArtifactSearchDialog" timestamp="1700985500689">
       <screen x="0" y="0" width="1536" height="816" />
     </state>
