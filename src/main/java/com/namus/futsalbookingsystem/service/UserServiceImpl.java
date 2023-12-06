@@ -19,8 +19,6 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
-
-
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -42,7 +40,6 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
 
     @Override
     public AuthResult findUserByPhoneAndPassword(User user) {
-
        List<User> users=userRepository.findByPhone(user.getPhone());
        if(!users.isEmpty()) {
            if(users!=null && passwordEncoder.matches(user.getPassword(),users.get(0).getPassword())){

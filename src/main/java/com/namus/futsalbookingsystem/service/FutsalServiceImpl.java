@@ -11,15 +11,15 @@ import java.util.List;
 public class FutsalServiceImpl implements FutsalService {
     @Autowired
     FutsalRepository futsalRepository;
+
     @Override
     public void saveFutsal(Futsal futsal) {
         futsalRepository.save(futsal);
-
     }
 
     @Override
     public List<Futsal> getAllFutsalData() {
-
         return futsalRepository.findAll();
     }
+
 }
