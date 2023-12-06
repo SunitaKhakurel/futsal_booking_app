@@ -67,7 +67,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/loginUser")
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         try {
             AuthResult authResult = service.findUserByPhoneAndPassword(user);
@@ -75,7 +75,7 @@ public class Controller {
 
             if (userList != null && !userList.isEmpty()) {
                 String token = jwtService.generateToken(userList.get(0).getUserName());
-                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), List.of(token));
+                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), token,userList.get(0).getRole());
                 return ResponseEntity.ok(apiResponse);
             } else {
                 ApiResponse apiResponse = new ApiResponse(authResult.getMessage(), HttpStatus.UNAUTHORIZED.value());
@@ -138,6 +138,20 @@ public class Controller {
         }
     }
 
+
+    @PostMapping("getAdminDetails")
+    public ResponseEntity<ApiResponse> listAllAdmin(){
+    try {
+        List<User> adminList=service.getAdminDetails();
+        ApiResponse apiResponse=new ApiResponse("success", HttpStatus.OK.value(),adminList);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }catch (Exception e){
+        ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+
+    }
+
+    }
 
     @GetMapping("/hello")
     @PreAuthorize("hasAuthority('User')")

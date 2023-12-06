@@ -81,6 +81,12 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         }
     }
 
+    @Override
+    public List<User> getAdminDetails() {
+        List<User> adminList=userRepository.findByRole("Admin");
+        return adminList;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
