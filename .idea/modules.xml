@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/futsalbookingsystem.iml" filepath="$PROJECT_DIR$/futsalbookingsystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/futsal_booking_app.iml" filepath="$PROJECT_DIR$/.idea/futsal_booking_app.iml" />
     </modules>
   </component>
 </project>
