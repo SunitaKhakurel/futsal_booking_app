@@ -14,15 +14,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 
@@ -43,18 +38,16 @@ public class Controller {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
-
     @PostMapping("/addNewUser")
-    public ResponseEntity<ApiResponse> addNewUser(@RequestBody User user) {
+    public ResponseEntity<ApiResponse> addNewUser(@RequestBody AppUser appUser) {
         try {
-            List<User> list= userRepository.findByPhone(user.getPhone());
+            List<AppUser> list= userRepository.findByPhone(appUser.getPhone());
                  if(!list.isEmpty()){
                      ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
                  }
 
-            service.saveUser(user);
+            service.saveUser(appUser);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         }catch(ValidationException v) {
@@ -68,14 +61,14 @@ public class Controller {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody User user) {
+    public ResponseEntity<?> loginUser(@RequestBody AppUser appUser) {
         try {
-            AuthResult authResult = service.findUserByPhoneAndPassword(user);
-            List<User> userList = authResult.getUsers();
+            AuthResult authResult = service.findUserByPhoneAndPassword(appUser);
+            List<AppUser> appUserList = authResult.getAppUsers();
 
-            if (userList != null && !userList.isEmpty()) {
-                String token = jwtService.generateToken(userList.get(0).getUserName());
-                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), token,userList.get(0).getRole());
+            if (appUserList != null && !appUserList.isEmpty()) {
+                String token = jwtService.generateToken(appUserList.get(0).getUserName());
+                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), token, appUserList.get(0).getRole());
                 return ResponseEntity.ok(apiResponse);
             } else {
                 ApiResponse apiResponse = new ApiResponse(authResult.getMessage(), HttpStatus.UNAUTHORIZED.value());
@@ -90,9 +83,9 @@ public class Controller {
 
 
     @PutMapping("/updatePassword")
-    public ResponseEntity<?> updatePassword(@RequestBody User user){
+    public ResponseEntity<?> updatePassword(@RequestBody AppUser appUser){
         try{
-           String message= service.changePassword(user);
+           String message= service.changePassword(appUser);
             ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         }catch (ValidationException v) {
@@ -105,7 +98,7 @@ public class Controller {
     }
 
     @PostMapping("/generateToken")
-    public String authenticateAndGetToken(@RequestBody User authRequest) {
+    public String authenticateAndGetToken(@RequestBody AppUser authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
             return jwtService.generateToken(authRequest.getUserName());
@@ -117,15 +110,15 @@ public class Controller {
     //Admin
 
     @PostMapping("/addNewAdmin")
-    public ResponseEntity<ApiResponse> addNewAdmin(@RequestBody User user) {
+    public ResponseEntity<ApiResponse> addNewAdmin(@RequestBody AppUser appUser) {
         try {
-            List<User> list= userRepository.findByPhone(user.getPhone());
+            List<AppUser> list= userRepository.findByPhone(appUser.getPhone());
             if(!list.isEmpty()){
                 ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
 
-            service.saveAdmin(user);
+            service.saveAdmin(appUser);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         }catch(ValidationException v) {
@@ -142,7 +135,7 @@ public class Controller {
     @PostMapping("getAdminDetails")
     public ResponseEntity<ApiResponse> listAllAdmin(){
     try {
-        List<User> adminList=service.getAdminDetails();
+        List<AppUser> adminList=service.getAdminDetails();
         ApiResponse apiResponse=new ApiResponse("success", HttpStatus.OK.value(),adminList);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }catch (Exception e){

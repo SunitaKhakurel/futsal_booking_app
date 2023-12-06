@@ -7,10 +7,10 @@ import java.io.InputStream;
 public class Futsal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private  int id;
+    private  int id;
     private String futsalName;
     private String futsalDescription;
-   private int price;
+    private int price;
 
     @Lob
     private byte[] image;

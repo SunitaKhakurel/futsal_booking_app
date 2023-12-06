@@ -1,7 +1,7 @@
 package com.namus.futsalbookingsystem.service;
 
 
-import com.namus.futsalbookingsystem.entity.User;
+import com.namus.futsalbookingsystem.entity.AppUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +17,10 @@ public class UserInfoDetails implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
 
-    public UserInfoDetails(User user) {
-        userName = user.getUserName();
-        password = user.getPassword();
-        authorities = Arrays.stream(user.getRole().split(","))
+    public UserInfoDetails(AppUser appUser) {
+        userName = appUser.getUserName();
+        password = appUser.getPassword();
+        authorities = Arrays.stream(appUser.getRole().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

@@ -2,7 +2,7 @@ package com.namus.futsalbookingsystem.service;
 
 
 import com.namus.futsalbookingsystem.entity.AuthResult;
-import com.namus.futsalbookingsystem.entity.User;
+import com.namus.futsalbookingsystem.entity.AppUser;
 import com.namus.futsalbookingsystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +23,12 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public String saveUser(User user) {
+    public String saveUser(AppUser appUser) {
         try{
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRole("User");
-            user.setUserName(user.getName() + user.getPhone());
-            userRepository.save(user);
+            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            appUser.setRole("User");
+            appUser.setUserName(appUser.getName() + appUser.getPhone());
+            userRepository.save(appUser);
             return "saved";
         }catch(Exception e){
             return e.toString();
@@ -39,11 +39,11 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
 
 
     @Override
-    public AuthResult findUserByPhoneAndPassword(User user) {
-       List<User> users=userRepository.findByPhone(user.getPhone());
-       if(!users.isEmpty()) {
-           if(users!=null && passwordEncoder.matches(user.getPassword(),users.get(0).getPassword())){
-               return new AuthResult(users, "Authentication successful");
+    public AuthResult findUserByPhoneAndPassword(AppUser appUser) {
+       List<AppUser> appUsers =userRepository.findByPhone(appUser.getPhone());
+       if(!appUsers.isEmpty()) {
+           if(appUsers !=null && passwordEncoder.matches(appUser.getPassword(), appUsers.get(0).getPassword())){
+               return new AuthResult(appUsers, "Authentication successful");
            } else {
                return new AuthResult(null, "Invalid credentials");
            }
@@ -53,12 +53,12 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
        }
 
     @Override
-    public String changePassword(User user) {
-        List<User> users=userRepository.findByPhone(user.getPhone());
-        User userDetails=users.get(0);
-        if(userDetails!=null){
-            userDetails.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(userDetails);
+    public String changePassword(AppUser appUser) {
+        List<AppUser> appUsers =userRepository.findByPhone(appUser.getPhone());
+        AppUser appUserDetails = appUsers.get(0);
+        if(appUserDetails !=null){
+            appUserDetails.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            userRepository.save(appUserDetails);
             return "Password updated";
         }else{
             return "User Not found";
@@ -66,12 +66,12 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
     }
 
     @Override
-    public String saveAdmin(User user) {
+    public String saveAdmin(AppUser appUser) {
         try{
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRole("Admin");
-            user.setUserName(user.getName() + user.getPhone());
-            userRepository.save(user);
+            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            appUser.setRole("Admin");
+            appUser.setUserName(appUser.getName() + appUser.getPhone());
+            userRepository.save(appUser);
             return "saved";
         }catch(Exception e){
             return e.toString();
@@ -79,15 +79,15 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
     }
 
     @Override
-    public List<User> getAdminDetails() {
-        List<User> adminList=userRepository.findByRole("Admin");
+    public List<AppUser> getAdminDetails() {
+        List<AppUser> adminList=userRepository.findByRole("Admin");
         return adminList;
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<User> userDetails=userRepository.findByuserName(userName);
+        Optional<AppUser> userDetails=userRepository.findByuserName(userName);
         return userDetails.map(UserInfoDetails::new).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
     }
 
