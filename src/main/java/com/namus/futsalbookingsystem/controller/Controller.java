@@ -1,6 +1,7 @@
 package com.namus.futsalbookingsystem.controller;
 
 import com.namus.futsalbookingsystem.entity.*;
+import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import com.namus.futsalbookingsystem.repository.UserRepository;
 import com.namus.futsalbookingsystem.response.ApiResponse;
 import com.namus.futsalbookingsystem.service.FutsalService;
@@ -14,14 +15,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -41,20 +40,23 @@ public class Controller {
     private UserRepository userRepository;
 
     @Autowired
+    private FutsalRepository futsalRepository;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
 
 
     @PostMapping("/addNewUser")
-    public ResponseEntity<ApiResponse> addNewUser(@RequestBody User user) {
+    public ResponseEntity<ApiResponse> addNewUser(@RequestBody AppUser appUser) {
         try {
-            List<User> list= userRepository.findByPhone(user.getPhone());
+            List<AppUser> list= userRepository.findByPhone(appUser.getPhone());
                  if(!list.isEmpty()){
                      ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
                  }
 
-            service.saveUser(user);
+            service.saveUser(appUser);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         }catch(ValidationException v) {
@@ -68,14 +70,15 @@ public class Controller {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody User user) {
+    public ResponseEntity<?> loginUser(@RequestBody AppUser appUser) {
         try {
-            AuthResult authResult = service.findUserByPhoneAndPassword(user);
-            List<User> userList = authResult.getUsers();
+            AuthResult authResult = service.findUserByPhoneAndPassword(appUser);
+            List<AppUser> appUserList = authResult.getAppUsers();
 
-            if (userList != null && !userList.isEmpty()) {
-                String token = jwtService.generateToken(userList.get(0).getUserName());
-                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), token,userList.get(0).getRole());
+            if (appUserList != null && !appUserList.isEmpty()) {
+                String token = jwtService.generateToken(appUserList.get(0).getUserName());
+
+                ApiResponse apiResponse = new ApiResponse("Login successful", HttpStatus.OK.value(), token, appUserList.get(0).getRole());
                 return ResponseEntity.ok(apiResponse);
             } else {
                 ApiResponse apiResponse = new ApiResponse(authResult.getMessage(), HttpStatus.UNAUTHORIZED.value());
@@ -90,9 +93,9 @@ public class Controller {
 
 
     @PutMapping("/updatePassword")
-    public ResponseEntity<?> updatePassword(@RequestBody User user){
+    public ResponseEntity<?> updatePassword(@RequestBody AppUser appUser){
         try{
-           String message= service.changePassword(user);
+           String message= service.changePassword(appUser);
             ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         }catch (ValidationException v) {
@@ -105,7 +108,7 @@ public class Controller {
     }
 
     @PostMapping("/generateToken")
-    public String authenticateAndGetToken(@RequestBody User authRequest) {
+    public String authenticateAndGetToken(@RequestBody AppUser authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
             return jwtService.generateToken(authRequest.getUserName());
@@ -117,32 +120,50 @@ public class Controller {
     //Admin
 
     @PostMapping("/addNewAdmin")
-    public ResponseEntity<ApiResponse> addNewAdmin(@RequestBody User user) {
-        try {
-            List<User> list= userRepository.findByPhone(user.getPhone());
-            if(!list.isEmpty()){
-                ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    public ResponseEntity<ApiResponse> addNewAdmin(@RequestBody AppUser appUser) {
+        System.out.println("user"+appUser.getUserName());
+
+            if(appUser.getUserName() != null){
+                System.out.println("user"+appUser.getUserName());
+                try {
+                    service.updateAdmin(appUser);
+                    ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
+                    return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+                }catch (ValidationException v) {
+
+                    ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                } catch (Exception e) {
+                    ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+                }
+            }else {
+                try {
+                    List<AppUser> list = userRepository.findByPhone(appUser.getPhone());
+                    if (!list.isEmpty()) {
+                        ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                    }
+
+                    service.saveAdmin(appUser);
+                    ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
+                    return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+                } catch (ValidationException v) {
+
+                    ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                } catch (Exception e) {
+                    ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+                }
             }
-
-            service.saveAdmin(user);
-            ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
-            return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
-        }catch(ValidationException v) {
-
-            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
-        } catch (Exception e) {
-            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
-        }
     }
 
 
     @PostMapping("getAdminDetails")
     public ResponseEntity<ApiResponse> listAllAdmin(){
     try {
-        List<User> adminList=service.getAdminDetails();
+        List<AppUser> adminList=service.getAdminDetails();
         ApiResponse apiResponse=new ApiResponse("success", HttpStatus.OK.value(),adminList);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }catch (Exception e){
@@ -151,6 +172,137 @@ public class Controller {
 
     }
 
+    }
+
+    @PostMapping("/deleteAdmin")
+    public  ResponseEntity<ApiResponse> deleteAdmin(@RequestBody AppUser appUser){
+        System.out.println("hello");
+        try{
+            service.deleteAdmin(appUser);
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        }catch (NoSuchElementException e){
+            ApiResponse apiResponse=new ApiResponse("Student not found",HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+        }
+
+        catch (Exception e){
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+
+        }
+    }
+
+    @PostMapping("/saveFutsal")
+    public ResponseEntity<ApiResponse> saveFutsal(@RequestBody Futsal futsal) {
+        try{
+            Optional<Futsal> futsal1=futsalRepository.findByPhone(futsal.getPhone());
+            if(!futsal1.isEmpty()){
+                ApiResponse apiResponse = new ApiResponse("Futsal with same phone number already exist", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            }
+        futsalService.saveFutsal(futsal);
+            ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+        } catch (ValidationException v) {
+
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+
+    }
+
+    @GetMapping("/getFutsalDetails")
+    public ResponseEntity<ApiResponse> listAllFutsal(){
+        try {
+            List<Futsal> adminList=futsalService.getAllFutsalData();
+            ApiResponse apiResponse=new ApiResponse("success", HttpStatus.OK.value(),adminList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        }catch (Exception e){
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+
+        }
+
+    }
+
+    @GetMapping("/getFutsalData")
+    public List<Futsal> getFutsalData() {
+        return futsalService.getAllFutsalData(); // Implement a service method to fetch the data
+    }
+
+
+
+    @GetMapping("/adminDetails/{phone}")
+    public ResponseEntity<ApiResponse> adminDetails(@PathVariable("phone")long phone)
+    {
+
+        try{
+
+            List<AppUser> appUsers=service.getUserByPhoneNumber(phone);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(),appUsers.get(0));
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        }catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+
+    @GetMapping("/futsalDetails/{phone}")
+    public ResponseEntity<ApiResponse> futsalDetails(@PathVariable("phone")long phone)
+    {
+
+        try{
+
+           Futsal futsal=futsalService.getFutsalByPhoneNumber(phone);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(),futsal);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        }catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+
+    @PutMapping("/updateFutsal/{phone}")
+    public ResponseEntity<ApiResponse> updateFutsal(@RequestBody Futsal futsal, @PathVariable("phone") long phone)
+    {
+
+        try{
+            futsalService.updateFutsalDetails(futsal,phone);
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (ValidationException v) {
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @DeleteMapping("/deleteFutsal/{phone}")
+    public  ResponseEntity<ApiResponse> deletestudent(@PathVariable("phone") long phone){
+        try{
+            System.out.println(phone);
+            futsalService.deleteFutsal(phone);
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        }catch (NoSuchElementException e){
+            ApiResponse apiResponse=new ApiResponse("Student not found",HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+        }
+        catch (Exception e){
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+
+        }
     }
 
     @GetMapping("/hello")

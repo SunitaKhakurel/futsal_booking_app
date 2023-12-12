@@ -1,18 +1,16 @@
 package com.namus.futsalbookingsystem.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
-public class User {
+public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     private String name;
     private String email;
     private String gender;
+    @Column(unique = true)
     private Long phone;
 
 

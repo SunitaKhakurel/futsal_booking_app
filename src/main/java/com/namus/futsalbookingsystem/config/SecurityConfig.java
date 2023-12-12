@@ -39,7 +39,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/addNewUser", "/generateToken","/login","/updatePassword","/addNewAdmin","/loginAdmin","/getAdminDetails").permitAll()
+                .antMatchers("/addNewUser", "/generateToken","/login","/updatePassword","/addNewAdmin","/loginAdmin","/getAdminDetails","/deleteAdmin","/saveFutsal","/getFutsalDetails","/adminDetails/{phone}","/futsalDetails/{phone}","/updateFutsal/{phone}","/deleteFutsal/{phone}").permitAll()
                 .antMatchers("/authenticate").permitAll()
 
                 .anyRequest().authenticated()
