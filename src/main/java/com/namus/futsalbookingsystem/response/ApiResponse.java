@@ -17,7 +17,7 @@ public class ApiResponse <T> {
     int statusCode;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("admin_list")
+    @JsonProperty("list")
     List<T> list;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,9 +36,19 @@ public class ApiResponse <T> {
     @JsonProperty("futsal_details")
     Futsal futsal;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("error")
+    String error;
+
     public ApiResponse(String status, int status_code){
         this.status=status;
         this.statusCode=status_code;
+    }
+
+    public ApiResponse(String status, int status_code,String error){
+        this.status=status;
+        this.statusCode=status_code;
+        this.error=error;
     }
 
 

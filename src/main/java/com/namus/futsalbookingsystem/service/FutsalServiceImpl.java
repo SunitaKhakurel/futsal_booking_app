@@ -1,6 +1,10 @@
 package com.namus.futsalbookingsystem.service;
 
+import com.namus.futsalbookingsystem.entity.BookingInfo;
+import com.namus.futsalbookingsystem.entity.Events;
 import com.namus.futsalbookingsystem.entity.Futsal;
+import com.namus.futsalbookingsystem.repository.BookingInfoRepository;
+import com.namus.futsalbookingsystem.repository.EventRepository;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,12 @@ import java.util.Optional;
 public class FutsalServiceImpl implements FutsalService {
     @Autowired
     FutsalRepository futsalRepository;
+
+    @Autowired
+    EventRepository eventRepository;
+
+    @Autowired
+    BookingInfoRepository bookingInfoRepository;
     @Override
     public void saveFutsal(Futsal futsal) {
 
@@ -53,4 +63,47 @@ public class FutsalServiceImpl implements FutsalService {
 
         futsalRepository.deleteById(futsal.getId());
     }
+
+    @Override
+    public void addEvent(Events event) {
+        eventRepository.save(event);
+    }
+
+    @Override
+    public List<Events> eventsDetails() {
+        List<Events> events=eventRepository.findAll();
+        return events;
+    }
+
+    @Override
+    public void updateEventDetails(Events events, int id) {
+        Events event=getEventsById(id);
+        if(event!=null){
+            event.setFutsalName(events.getFutsalName());
+            event.setEventTitle(events.getEventTitle());
+            event.setAddress(events.getAddress());
+            event.setEventImage(events.getEventImage());
+            eventRepository.save(event);
+        }
+
+    }
+
+    @Override
+    public Events getEventsById(int id) {
+        Optional<Events> events=eventRepository.findById(id);
+        return events.orElse(null);
+    }
+
+    @Override
+    public void deleteEvent(int id) {
+        Events event=getEventsById(id);
+        eventRepository.deleteById(event.getId());
+    }
+
+    @Override
+    public void bookFutsal(BookingInfo bookingInfo) {
+        bookingInfoRepository.save(bookingInfo);
+    }
+
+
 }

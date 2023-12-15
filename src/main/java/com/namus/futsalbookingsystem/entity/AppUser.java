@@ -1,16 +1,28 @@
 package com.namus.futsalbookingsystem.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+
+    @NotBlank(message = "Name cannot be blank")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String name;
+
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email cannot be blank")
     private String email;
+
+    @NotBlank(message = "Gender cannot be blank")
     private String gender;
+
     @Column(unique = true)
+    @NotNull(message = "Phone cannot be null")
+    @Positive(message = "Phone must be a positive number")
     private Long phone;
 
 
@@ -24,6 +36,7 @@ public class AppUser {
         this.address = address;
     }
 
+    @NotBlank(message = "Address cannot be blank")
     private String address;
 
     public String getRole() {
@@ -50,6 +63,8 @@ public class AppUser {
         this.phone = phone;
     }
 
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
     private String userName;

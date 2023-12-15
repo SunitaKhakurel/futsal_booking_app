@@ -1,6 +1,7 @@
 package com.namus.futsalbookingsystem.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -8,13 +9,25 @@ import java.util.List;
 @Entity
 public class Futsal {
     @Id
-            @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private  int id;
-   private String futsalName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private  int id;
+
+    @NotBlank(message = "Futsal name cannot be blank")
+    private String futsalName;
+
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email cannot be blank")
    private String email;
+
+    @NotBlank(message = "Address cannot be blank")
    private String address;
+
     @Column(unique = true)
+    @NotNull(message = "Phone cannot be null")
+    @Positive(message = "Phone must be a positive number")
    private long phone;
+
+    @NotBlank(message = "Time cannot be blank")
   private String time;
 
     public List<String> getService() {
@@ -25,6 +38,8 @@ public class Futsal {
         this.service = service;
     }
 
+    @Positive(message = "Price must be a positive number")
+    @NotBlank(message = "Price cannot be blank")
     private float price;
 
     public List<String> getImage() {
@@ -38,8 +53,11 @@ public class Futsal {
     @ElementCollection
     private List<String> image;
 
+    @NotBlank(message = "Service cannot be blank")
     @ElementCollection
    private List<String> service;
+
+    @NotBlank(message = "About Futsal cannot be blank")
    private String aboutFutsal;
 
     public int getId() {
