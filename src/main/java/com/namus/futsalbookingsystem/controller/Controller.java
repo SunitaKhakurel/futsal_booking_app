@@ -381,6 +381,22 @@ public class Controller {
         }
     }
 
+    @PostMapping("/registerTeam")
+    public ResponseEntity<ApiResponse> registerTeam(@Valid @RequestBody RegisterTeam registerTeam) {
+        try {
+                futsalService.registerTeam(registerTeam);
+            ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+        } catch (ValidationException v) {
+
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
     @GetMapping("/hello")
     @PreAuthorize("hasAuthority('User')")
     public String hello() {

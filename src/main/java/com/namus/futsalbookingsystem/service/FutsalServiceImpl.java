@@ -3,9 +3,11 @@ package com.namus.futsalbookingsystem.service;
 import com.namus.futsalbookingsystem.entity.BookingInfo;
 import com.namus.futsalbookingsystem.entity.Events;
 import com.namus.futsalbookingsystem.entity.Futsal;
+import com.namus.futsalbookingsystem.entity.RegisterTeam;
 import com.namus.futsalbookingsystem.repository.BookingInfoRepository;
 import com.namus.futsalbookingsystem.repository.EventRepository;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
+import com.namus.futsalbookingsystem.repository.RegisterTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ public class FutsalServiceImpl implements FutsalService {
 
     @Autowired
     BookingInfoRepository bookingInfoRepository;
+    @Autowired
+    RegisterTeamRepository registerTeamRepository;
     @Override
     public void saveFutsal(Futsal futsal) {
 
@@ -99,6 +103,11 @@ public class FutsalServiceImpl implements FutsalService {
     public void deleteEvent(int id) {
         Events event=getEventsById(id);
         eventRepository.deleteById(event.getId());
+    }
+
+    @Override
+    public void registerTeam(RegisterTeam registerTeam) {
+        registerTeamRepository.save(registerTeam);
     }
 
     @Override
