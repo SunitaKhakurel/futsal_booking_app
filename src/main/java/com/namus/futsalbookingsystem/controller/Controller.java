@@ -72,7 +72,7 @@ public class Controller {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody AppUser appUser) {
+    public ResponseEntity<?> loginUser(@RequestBody AppUser appUser) {
         try {
             AuthResult authResult = service.findUserByPhoneAndPassword(appUser);
             List<AppUser> appUserList = authResult.getAppUsers();
@@ -122,9 +122,10 @@ public class Controller {
     //Admin
 
     @PostMapping("/addNewAdmin")
-    public ResponseEntity<ApiResponse> addNewAdmin(@Valid @RequestBody AppUser appUser,BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse> addNewAdmin(@Valid @RequestBody AppUser appUser) {
         System.out.println("user" + appUser.getUserName());
-        System.out.println("hello"+bindingResult.getFieldError().toString());
+
+        System.out.println(appUser.getUserName());
         if (appUser.getUserName() != null) {
             System.out.println("user" + appUser.getUserName());
             try {
@@ -148,6 +149,7 @@ public class Controller {
                 }
 
                 service.saveAdmin(appUser);
+
                 ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
                 return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
             } catch (ValidationException v) {

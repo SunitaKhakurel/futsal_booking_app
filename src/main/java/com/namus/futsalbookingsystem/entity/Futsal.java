@@ -28,7 +28,26 @@ public class Futsal {
    private long phone;
 
     @NotBlank(message = "Time cannot be blank")
-  private String time;
+  private String openingTime;
+
+    @NotBlank(message = "Time cannot be blank")
+    private String closingTime;
+
+    public String getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(String openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(String closingTime) {
+        this.closingTime = closingTime;
+    }
 
     public List<String> getService() {
         return service;
@@ -100,13 +119,7 @@ public class Futsal {
         this.phone = phone;
     }
 
-    public String getTime() {
-        return time;
-    }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
 
     public float getPrice() {
         return price;

@@ -47,7 +47,8 @@ public class FutsalServiceImpl implements FutsalService {
        if(futsal1!=null){
            futsal1.setFutsalName(futsal.getFutsalName());
            futsal1.setEmail(futsal.getEmail());
-           futsal1.setTime(futsal.getTime());
+           futsal1.setOpeningTime(futsal.getOpeningTime());
+           futsal1.setClosingTime(futsal.getClosingTime());
            futsal1.setAddress(futsal1.getAddress());
            futsal1.setPrice(futsal.getPrice());
            futsal1.setImage(futsal.getImage());
