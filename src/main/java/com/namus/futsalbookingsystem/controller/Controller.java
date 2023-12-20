@@ -113,10 +113,20 @@ public class Controller {
         }
     }
 
-    @PostMapping("/changePassword/{phone}")
-    public ResponseEntity<?> changePassword(@Valid @RequestBody AppUser appUser, @PathVariable("phone") long phone){
-    return null;
-    }
+//    @PostMapping("/changePassword/{phone}")
+//    public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, @PathVariable("phone") long phone){
+//        try {
+//            String message =
+//            ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
+//            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+//        } catch (ValidationException v) {
+//            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+//        } catch (Exception e) {
+//            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+//        }
+//    }
     @PostMapping("/generateToken")
     public String authenticateAndGetToken(@Valid @RequestBody AppUser authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
@@ -395,17 +405,20 @@ public class Controller {
         try {
             futsalService.bookFutsal(bookingInfo);
             Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
+            List<String> futsalDeviceToken=futsal.getFutsalDeviceToken();
+
             try {
-            Message message=Message.builder()
-                    .setToken(futsal.getFutsalDeviceToken())
-                    .setNotification(Notification.builder()
-                            .setTitle(bookingInfo.getTitle())
-                    .setBody(bookingInfo.getMessageBody())
-                    .build()).putData("futsalName",bookingInfo.getFutsalName())
-                    .build();
-                String response = FirebaseMessaging.getInstance().send(message);
-                ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value(),response);
-                return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+                for(String deviceToken:futsalDeviceToken) {
+                    Message message = Message.builder()
+                            .setToken(deviceToken)
+                            .setNotification(Notification.builder()
+                                    .setTitle(bookingInfo.getTitle())
+                                    .setBody(bookingInfo.getMessageBody())
+                                    .build()).putData("futsalName", bookingInfo.getFutsalName())
+                            .build();
+
+                    String response = FirebaseMessaging.getInstance().send(message);
+                }
             }
             catch (FirebaseMessagingException e) {
                 String errorMessage = "Error sending notification: " + e.getMessage();
@@ -413,7 +426,9 @@ public class Controller {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
 
+            ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
 
+            return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         } catch (ValidationException v) {
 
             ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());

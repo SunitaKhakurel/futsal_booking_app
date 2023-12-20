@@ -36,13 +36,14 @@ public class Futsal {
 
     @NotBlank
 
-    private String futsalDeviceToken;
+    @ElementCollection
+    private List<String> futsalDeviceToken;
 
-    public String getFutsalDeviceToken() {
+    public List<String> getFutsalDeviceToken() {
         return futsalDeviceToken;
     }
 
-    public void setFutsalDeviceToken(String futsalDeviceToken) {
+    public void setFutsalDeviceToken(List<String> futsalDeviceToken) {
         this.futsalDeviceToken = futsalDeviceToken;
     }
 
