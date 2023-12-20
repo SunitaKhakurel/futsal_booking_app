@@ -27,6 +27,28 @@ public class RegisterTeam {
     @NotBlank(message = "Address cannot be blank")
     private String address;
 
+    @NotBlank(message = "Event Title cannot be blank")
+    private String eventTitle;
+
+    @NotBlank(message = "Futsal Name cannot be blank")
+    private String futsalName;
+
+    public String getFutsalName() {
+        return futsalName;
+    }
+
+    public void setFutsalName(String futsalName) {
+        this.futsalName = futsalName;
+    }
+
+    public String getEventTitle() {
+        return eventTitle;
+    }
+
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
+    }
+
     public int getId() {
         return id;
     }

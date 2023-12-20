@@ -6,13 +6,14 @@ import com.namus.futsalbookingsystem.entity.Futsal;
 import com.namus.futsalbookingsystem.entity.RegisterTeam;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FutsalService {
     public void  saveFutsal(Futsal futsal);
     public List<Futsal> getAllFutsalData();
 
     public Futsal getFutsalByPhoneNumber(long phone);
-
+    public Futsal getFutsalByFutsalName(String futsalName);
     public void updateFutsalDetails(Futsal futsal,long phone);
     public void deleteFutsal(long phone);
 
@@ -22,6 +23,9 @@ public interface FutsalService {
     public Events getEventsById(int id);
     public void deleteEvent(int id);
     public void registerTeam(RegisterTeam registerTeam);
+    public List<Events> getEventAccordingToFutsalName(String futsalName);
+    public List<RegisterTeam> getregInfoByFutsalName(String futsalName);
+
     public void bookFutsal(BookingInfo bookingInfo);
 }
 

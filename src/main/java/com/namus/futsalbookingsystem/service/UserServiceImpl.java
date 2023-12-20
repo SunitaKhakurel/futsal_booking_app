@@ -3,6 +3,7 @@ package com.namus.futsalbookingsystem.service;
 
 import com.namus.futsalbookingsystem.entity.AppUser;
 import com.namus.futsalbookingsystem.entity.AuthResult;
+import com.namus.futsalbookingsystem.entity.EditAdminProfile;
 import com.namus.futsalbookingsystem.entity.Futsal;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import com.namus.futsalbookingsystem.repository.UserRepository;
@@ -119,7 +120,18 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         }
     }
 
+    @Override
+    public void updateAdminProfile(EditAdminProfile appUser, long phone) {
+        List<AppUser> appUser1=getUserByPhoneNumber(phone);
+        AppUser appUser2=appUser1.get(0);
+        if(appUser2!=null){
+            appUser2.setName(appUser.getAdminName());
+            appUser2.setEmail(appUser.getEmail());
+            appUser2.setAddress(appUser.getAddress());
+            userRepository.save(appUser2);
+        }
 
+    }
 
 
     @Override

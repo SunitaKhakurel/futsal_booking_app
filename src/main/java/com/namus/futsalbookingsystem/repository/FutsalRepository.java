@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface FutsalRepository extends JpaRepository<Futsal,Integer> {
 Optional<Futsal>  findByPhone(long phone);
 void deleteByPhone(long phone);
+
+Optional<Futsal> findByFutsalName(String futsalName);
 }

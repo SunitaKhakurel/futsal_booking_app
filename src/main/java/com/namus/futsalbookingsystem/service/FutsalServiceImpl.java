@@ -46,6 +46,12 @@ public class FutsalServiceImpl implements FutsalService {
     }
 
     @Override
+    public Futsal getFutsalByFutsalName(String futsalName) {
+        Optional<Futsal> futsal=futsalRepository.findByFutsalName(futsalName);
+        return futsal.orElse(null);
+    }
+
+    @Override
     public void updateFutsalDetails(Futsal futsal, long phone) {
        Futsal futsal1=getFutsalByPhoneNumber(phone);
        if(futsal1!=null){
@@ -108,6 +114,18 @@ public class FutsalServiceImpl implements FutsalService {
     @Override
     public void registerTeam(RegisterTeam registerTeam) {
         registerTeamRepository.save(registerTeam);
+    }
+
+    @Override
+    public List<Events> getEventAccordingToFutsalName(String futsalName) {
+        List<Events> events=eventRepository.findByFutsalName(futsalName);
+        return events;
+    }
+
+    @Override
+    public List<RegisterTeam> getregInfoByFutsalName(String futsalName) {
+        List<RegisterTeam> teams=registerTeamRepository.findByFutsalName(futsalName);
+        return teams;
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.namus.futsalbookingsystem.service;
 
+import com.namus.futsalbookingsystem.App;
 import com.namus.futsalbookingsystem.entity.AppUser;
 import com.namus.futsalbookingsystem.entity.AuthResult;
+import com.namus.futsalbookingsystem.entity.EditAdminProfile;
 import com.namus.futsalbookingsystem.entity.Futsal;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public interface UserService{
     public void updateAdmin(AppUser appUser);
     public void deleteAdmin(AppUser appUser);
 
-
+    public void updateAdminProfile(EditAdminProfile editAdminProfile, long phone);
 
 
 }
