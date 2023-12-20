@@ -27,6 +27,72 @@ public class BookingInfo {
     @NotBlank(message = "Address cannot be blank")
     private String address;
 
+    @NotBlank(message = "futsalName cannot be blank")
+    private String futsalName;
+
+    @NotBlank
+    private String messageBody;
+
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String time;
+
+    @NotBlank
+    private String venueCharge;
+
+    public String getMessageBody() {
+        return messageBody;
+    }
+
+    public void setMessageBody(String messageBody) {
+        this.messageBody = messageBody;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getVenueCharge() {
+        return venueCharge;
+    }
+
+    public void setVenueCharge(String venueCharge) {
+        this.venueCharge = venueCharge;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    @NotBlank
+    private String paymentStatus;
+
+    public String getFutsalName() {
+        return futsalName;
+    }
+
+    public void setFutsalName(String futsalName) {
+        this.futsalName = futsalName;
+    }
+
     public int getId() {
         return id;
     }

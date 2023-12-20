@@ -1,9 +1,7 @@
 package com.namus.futsalbookingsystem.service;
 
 
-import com.namus.futsalbookingsystem.entity.AppUser;
-import com.namus.futsalbookingsystem.entity.AuthResult;
-import com.namus.futsalbookingsystem.entity.Futsal;
+import com.namus.futsalbookingsystem.entity.*;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import com.namus.futsalbookingsystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +69,7 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         }
     }
 
+
     @Override
     public String saveAdmin(AppUser appUser) {
         try{
@@ -97,6 +96,12 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
     }
 
     @Override
+    public String changePassword(PasswordChangeRequest passwordChangeRequest, long phone) {
+        List<AppUser> appUsers=getUserByPhoneNumber(phone);
+        return null;
+    }
+
+    @Override
     public void updateAdmin(AppUser appUser) {
         AppUser appUser1= userRepository.findByUserName(appUser.getUserName());
                 if(appUser1!=null){
@@ -119,7 +124,19 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         }
     }
 
+    @Override
+    public void updateAdminProfile(EditAdminProfile appUser, long phone) {
+        List<AppUser> appUser1=getUserByPhoneNumber(phone);
+        AppUser appUser2=appUser1.get(0);
+        if(appUser2!=null){
+            appUser2.setName(appUser.getAdminName());
+            appUser2.setEmail(appUser.getEmail());
+            appUser2.setAddress(appUser.getAddress());
+           appUser2.setImage(appUser.getImage());
+            userRepository.save(appUser2);
+        }
 
+    }
 
 
     @Override

@@ -1,5 +1,8 @@
 package com.namus.futsalbookingsystem.controller;
-
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.namus.futsalbookingsystem.entity.*;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import com.namus.futsalbookingsystem.repository.UserRepository;
@@ -72,7 +75,7 @@ public class Controller {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody AppUser appUser) {
+    public ResponseEntity<?> loginUser(@RequestBody AppUser appUser) {
         try {
             AuthResult authResult = service.findUserByPhoneAndPassword(appUser);
             List<AppUser> appUserList = authResult.getAppUsers();
@@ -94,7 +97,8 @@ public class Controller {
     }
 
 
-    @PutMapping("/updatePassword")
+
+    @PostMapping("/forgotPassword")
     public ResponseEntity<?> updatePassword(@Valid @RequestBody AppUser appUser) {
         try {
             String message = service.changePassword(appUser);
@@ -109,6 +113,20 @@ public class Controller {
         }
     }
 
+//    @PostMapping("/changePassword/{phone}")
+//    public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, @PathVariable("phone") long phone){
+//        try {
+//            String message =
+//            ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
+//            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+//        } catch (ValidationException v) {
+//            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+//        } catch (Exception e) {
+//            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+//        }
+//    }
     @PostMapping("/generateToken")
     public String authenticateAndGetToken(@Valid @RequestBody AppUser authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
@@ -122,9 +140,10 @@ public class Controller {
     //Admin
 
     @PostMapping("/addNewAdmin")
-    public ResponseEntity<ApiResponse> addNewAdmin(@Valid @RequestBody AppUser appUser,BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse> addNewAdmin(@Valid @RequestBody AppUser appUser) {
         System.out.println("user" + appUser.getUserName());
-        System.out.println("hello"+bindingResult.getFieldError().toString());
+
+        System.out.println(appUser.getUserName());
         if (appUser.getUserName() != null) {
             System.out.println("user" + appUser.getUserName());
             try {
@@ -148,6 +167,7 @@ public class Controller {
                 }
 
                 service.saveAdmin(appUser);
+
                 ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
                 return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
             } catch (ValidationException v) {
@@ -175,6 +195,23 @@ public class Controller {
         }
 
     }
+
+    @PostMapping("/editAdminProfile/{phone}")
+    public ResponseEntity<ApiResponse> updateAdmin(@Valid @RequestBody EditAdminProfile editAdminProfile, @PathVariable("phone") long phone) {
+
+        try {
+                service.updateAdminProfile(editAdminProfile,phone);
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (ValidationException v) {
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
 
     @PostMapping("/deleteAdmin")
     public ResponseEntity<ApiResponse> deleteAdmin(@Valid @RequestBody AppUser appUser) {
@@ -367,6 +404,45 @@ public class Controller {
     public ResponseEntity<ApiResponse> bookFutsal(@Valid @RequestBody BookingInfo bookingInfo) {
         try {
             futsalService.bookFutsal(bookingInfo);
+            Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
+            List<String> futsalDeviceToken=futsal.getFutsalDeviceToken();
+
+            try {
+                for(String deviceToken:futsalDeviceToken) {
+                    Message message = Message.builder()
+                            .setToken(deviceToken)
+                            .setNotification(Notification.builder()
+                                    .setTitle(bookingInfo.getTitle())
+                                    .setBody(bookingInfo.getMessageBody())
+                                    .build()).putData("futsalName", bookingInfo.getFutsalName())
+                            .build();
+
+                    String response = FirebaseMessaging.getInstance().send(message);
+                }
+            }
+            catch (FirebaseMessagingException e) {
+                String errorMessage = "Error sending notification: " + e.getMessage();
+                ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value(),errorMessage);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            }
+
+            ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
+
+            return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+        } catch (ValidationException v) {
+
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @PostMapping("/registerTeam")
+    public ResponseEntity<ApiResponse> registerTeam(@Valid @RequestBody RegisterTeam registerTeam) {
+        try {
+                futsalService.registerTeam(registerTeam);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         } catch (ValidationException v) {
@@ -375,6 +451,34 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
         } catch (Exception e) {
             ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @GetMapping("/eventDetailsAccordingToFutsalName/{futsalName}")
+    public ResponseEntity<ApiResponse> eventDetailsAccordingToFutsalName(@PathVariable("futsalName") String futsalName) {
+
+        try {
+            List<Events> eventsList= futsalService.getEventAccordingToFutsalName(futsalName);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), eventsList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @GetMapping("/registerationDetailAccordingToFutsalName/{futsalName}")
+    public ResponseEntity<ApiResponse> regDetailsByFutsal(@PathVariable("futsalName") String futsalName) {
+
+        try {
+           List<RegisterTeam> teams=futsalService.getregInfoByFutsalName(futsalName);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), teams);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }
