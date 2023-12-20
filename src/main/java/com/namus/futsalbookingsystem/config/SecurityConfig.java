@@ -1,6 +1,9 @@
 package com.namus.futsalbookingsystem.config;
 
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.namus.futsalbookingsystem.filter.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 
 @Configuration
@@ -40,7 +46,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/addNewUser", "/generateToken","/login","/updatePassword","/addNewAdmin","/loginAdmin","/getAdminDetails","/deleteAdmin","/saveFutsal","/getFutsalDetails","/adminDetails/{phone}","/futsalDetails/{phone}","/updateFutsal/{phone}","/deleteFutsal/{phone}",
-                "/addNewEvent","/eventDetails","/updateEvent/{id}","/deleteEvent/{id}","/bookFutsal").permitAll()
+                "/addNewEvent","/eventDetails","/updateEvent/{id}","/deleteEvent/{id}","/bookFutsal","/registerTeam","/eventDetailsAccordingToFutsalName/{futsalName}","/registerationDetailAccordingToFutsalName/{futsalName}","/editAdminProfile/{phone}").permitAll()
                 .antMatchers("/authenticate").permitAll()
 
                 .anyRequest().authenticated()
@@ -57,5 +63,8 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+
+
 
 }

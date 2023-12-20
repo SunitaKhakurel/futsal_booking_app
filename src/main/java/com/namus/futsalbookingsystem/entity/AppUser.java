@@ -25,6 +25,15 @@ public class AppUser {
     @Positive(message = "Phone must be a positive number")
     private Long phone;
 
+private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     private String role;
 

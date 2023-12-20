@@ -1,5 +1,7 @@
 package com.namus.futsalbookingsystem;
 
+
+import com.namus.futsalbookingsystem.config.SecurityConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,6 +9,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class App {
 
     public static void main(String[] args) {
-        SpringApplication.run(App.class);
+
+        try {
+           // FirebaseConfig.initializeFirebase();
+
+            SpringApplication.run(App.class, args);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
     }
 }

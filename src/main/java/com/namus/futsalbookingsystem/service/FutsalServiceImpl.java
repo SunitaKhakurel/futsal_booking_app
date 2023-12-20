@@ -3,9 +3,11 @@ package com.namus.futsalbookingsystem.service;
 import com.namus.futsalbookingsystem.entity.BookingInfo;
 import com.namus.futsalbookingsystem.entity.Events;
 import com.namus.futsalbookingsystem.entity.Futsal;
+import com.namus.futsalbookingsystem.entity.RegisterTeam;
 import com.namus.futsalbookingsystem.repository.BookingInfoRepository;
 import com.namus.futsalbookingsystem.repository.EventRepository;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
+import com.namus.futsalbookingsystem.repository.RegisterTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ public class FutsalServiceImpl implements FutsalService {
 
     @Autowired
     BookingInfoRepository bookingInfoRepository;
+    @Autowired
+    RegisterTeamRepository registerTeamRepository;
     @Override
     public void saveFutsal(Futsal futsal) {
 
@@ -42,12 +46,19 @@ public class FutsalServiceImpl implements FutsalService {
     }
 
     @Override
+    public Futsal getFutsalByFutsalName(String futsalName) {
+        Optional<Futsal> futsal=futsalRepository.findByFutsalName(futsalName);
+        return futsal.orElse(null);
+    }
+
+    @Override
     public void updateFutsalDetails(Futsal futsal, long phone) {
        Futsal futsal1=getFutsalByPhoneNumber(phone);
        if(futsal1!=null){
            futsal1.setFutsalName(futsal.getFutsalName());
            futsal1.setEmail(futsal.getEmail());
-           futsal1.setTime(futsal.getTime());
+           futsal1.setOpeningTime(futsal.getOpeningTime());
+           futsal1.setClosingTime(futsal.getClosingTime());
            futsal1.setAddress(futsal1.getAddress());
            futsal1.setPrice(futsal.getPrice());
            futsal1.setImage(futsal.getImage());
@@ -98,6 +109,23 @@ public class FutsalServiceImpl implements FutsalService {
     public void deleteEvent(int id) {
         Events event=getEventsById(id);
         eventRepository.deleteById(event.getId());
+    }
+
+    @Override
+    public void registerTeam(RegisterTeam registerTeam) {
+        registerTeamRepository.save(registerTeam);
+    }
+
+    @Override
+    public List<Events> getEventAccordingToFutsalName(String futsalName) {
+        List<Events> events=eventRepository.findByFutsalName(futsalName);
+        return events;
+    }
+
+    @Override
+    public List<RegisterTeam> getregInfoByFutsalName(String futsalName) {
+        List<RegisterTeam> teams=registerTeamRepository.findByFutsalName(futsalName);
+        return teams;
     }
 
     @Override

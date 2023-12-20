@@ -11,7 +11,7 @@ public class Futsal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
    private  int id;
-
+    @Column(unique = true)
     @NotBlank(message = "Futsal name cannot be blank")
     private String futsalName;
 
@@ -28,7 +28,40 @@ public class Futsal {
    private long phone;
 
     @NotBlank(message = "Time cannot be blank")
-  private String time;
+  private String openingTime;
+
+    @NotBlank(message = "Time cannot be blank")
+    private String closingTime;
+
+
+    @NotBlank
+
+    @ElementCollection
+    private List<String> futsalDeviceToken;
+
+    public List<String> getFutsalDeviceToken() {
+        return futsalDeviceToken;
+    }
+
+    public void setFutsalDeviceToken(List<String> futsalDeviceToken) {
+        this.futsalDeviceToken = futsalDeviceToken;
+    }
+
+    public String getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(String openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(String closingTime) {
+        this.closingTime = closingTime;
+    }
 
     public List<String> getService() {
         return service;
@@ -100,13 +133,7 @@ public class Futsal {
         this.phone = phone;
     }
 
-    public String getTime() {
-        return time;
-    }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
 
     public float getPrice() {
         return price;
