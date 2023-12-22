@@ -98,7 +98,21 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
     @Override
     public String changePassword(PasswordChangeRequest passwordChangeRequest, long phone) {
         List<AppUser> appUsers=getUserByPhoneNumber(phone);
-        return null;
+        AppUser appUser=appUsers.get(0);
+        String password=appUser.getPassword();
+        System.out.println("p"+password);
+        String currentPassword=passwordEncoder.encode(passwordChangeRequest.getCurrentPassword());
+        System.out.println("c"+currentPassword);
+        String newPassword=passwordEncoder.encode(passwordChangeRequest.getNewPassword());
+        System.out.println("n"+newPassword);
+        if(passwordEncoder.matches(passwordChangeRequest.getCurrentPassword(),password)){
+            appUser.setPassword(newPassword);
+            userRepository.save(appUser);
+            return "Password Updated";
+        }else{
+            return "password didnot match";
+        }
+
     }
 
     @Override
@@ -121,6 +135,16 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         AppUser appUser1= userRepository.findByUserName(appUser.getUserName());
         if(appUser1!=null){
             userRepository.deleteById(appUser1.getId());
+        }
+    }
+
+    @Override
+    public void updateDeviceToken(AppUser appUser,long phone) {
+        List<AppUser> appUser1=getUserByPhoneNumber(phone);
+        AppUser appUser2=appUser1.get(0);
+        if(appUser2!=null) {
+        appUser2.setFutsalDeviceToken(appUser.getFutsalDeviceToken());
+        userRepository.save(appUser2);
         }
     }
 

@@ -2,6 +2,8 @@ package com.namus.futsalbookingsystem.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class AppUser {
@@ -24,6 +26,17 @@ public class AppUser {
     @NotNull(message = "Phone cannot be null")
     @Positive(message = "Phone must be a positive number")
     private Long phone;
+
+    @ElementCollection
+    private Set<String> futsalDeviceToken;
+
+    public Set<String> getFutsalDeviceToken() {
+        return futsalDeviceToken;
+    }
+
+    public void setFutsalDeviceToken(Set<String> futsalDeviceToken) {
+        this.futsalDeviceToken = futsalDeviceToken;
+    }
 
 private String image;
 

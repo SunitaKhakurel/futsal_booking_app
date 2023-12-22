@@ -34,19 +34,6 @@ public class Futsal {
     private String closingTime;
 
 
-    @NotBlank
-
-    @ElementCollection
-    private List<String> futsalDeviceToken;
-
-    public List<String> getFutsalDeviceToken() {
-        return futsalDeviceToken;
-    }
-
-    public void setFutsalDeviceToken(List<String> futsalDeviceToken) {
-        this.futsalDeviceToken = futsalDeviceToken;
-    }
-
     public String getOpeningTime() {
         return openingTime;
     }
@@ -72,7 +59,6 @@ public class Futsal {
     }
 
     @Positive(message = "Price must be a positive number")
-    @NotBlank(message = "Price cannot be blank")
     private float price;
 
     public List<String> getImage() {
@@ -86,7 +72,7 @@ public class Futsal {
     @ElementCollection
     private List<String> image;
 
-    @NotBlank(message = "Service cannot be blank")
+
     @ElementCollection
    private List<String> service;
 

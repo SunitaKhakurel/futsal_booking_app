@@ -17,6 +17,8 @@ public interface UserService{
     public void updateAdmin(AppUser appUser);
     public void deleteAdmin(AppUser appUser);
 
+    public void updateDeviceToken(AppUser appUser,long phone);
+
     public void updateAdminProfile(EditAdminProfile editAdminProfile, long phone);
 
 
