@@ -12,34 +12,29 @@ public class BookingInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
    private int id;
 
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String name;
 
-    @NotNull(message = "Contact cannot be null")
-    @Positive(message = "Contact must be a positive number")
     private long contact;
 
-    @NotNull(message = "Number of players cannot be null")
-    @Min(value = 1, message = "Number of players must be at least 1")
+
     private int noOfPlayers;
 
-    @NotBlank(message = "Address cannot be blank")
+
     private String address;
 
-    @NotBlank(message = "futsalName cannot be blank")
+
     private String futsalName;
 
-    @NotBlank
+
     private String messageBody;
 
-    @NotBlank
+
     private String title;
 
-    @NotBlank
+
     private String time;
 
-    @NotBlank
+
     private String venueCharge;
 
     public String getMessageBody() {

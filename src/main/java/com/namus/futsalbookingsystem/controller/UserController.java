@@ -11,6 +11,7 @@ import com.namus.futsalbookingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -165,9 +166,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
 
         }
-
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/editAdminProfile/{phone}")
     public ResponseEntity<ApiResponse> updateAdmin(@Valid @RequestBody EditAdminProfile editAdminProfile, @PathVariable("phone") long phone) {
 
@@ -202,6 +203,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     @GetMapping("/adminDetails/{phone}")
     public ResponseEntity<ApiResponse> adminDetails(@Valid @PathVariable("phone") long phone) {
 
@@ -217,6 +219,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/changePassword/{phone}")
     public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, @PathVariable("phone") long phone){
         try {
