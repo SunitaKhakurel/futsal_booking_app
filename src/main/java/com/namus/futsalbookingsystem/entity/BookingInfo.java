@@ -16,13 +16,10 @@ public class BookingInfo {
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String name;
 
-    @NotNull(message = "Contact cannot be null")
-    @Positive(message = "Contact must be a positive number")
+    
     private long contact;
 
-    @NotNull(message = "Number of players cannot be null")
-    @Min(value = 1, message = "Number of players must be at least 1")
-    private int noOfPlayers;
+     private int noOfPlayers;
 
     @NotBlank(message = "Address cannot be blank")
     private String address;
