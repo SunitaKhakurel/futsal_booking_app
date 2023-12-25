@@ -28,13 +28,13 @@ public class AppUser {
     private Long phone;
 
     @ElementCollection
-    private Set<String> futsalDeviceToken;
+    private List<String> futsalDeviceToken;
 
-    public Set<String> getFutsalDeviceToken() {
+    public List<String> getFutsalDeviceToken() {
         return futsalDeviceToken;
     }
 
-    public void setFutsalDeviceToken(Set<String> futsalDeviceToken) {
+    public void setFutsalDeviceToken(List<String> futsalDeviceToken) {
         this.futsalDeviceToken = futsalDeviceToken;
     }
 

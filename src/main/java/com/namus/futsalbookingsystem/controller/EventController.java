@@ -6,6 +6,7 @@ import com.namus.futsalbookingsystem.service.FutsalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class EventController {
     @Autowired
     FutsalService futsalService;
 
-
+    @PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/addNewEvent")
     public ResponseEntity<ApiResponse> addNewEvent(@Valid @RequestBody Events event) {
         try {
@@ -38,7 +39,7 @@ public class EventController {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('Admin')")
     @GetMapping("/eventDetails")
     public ResponseEntity<ApiResponse> eventDetails() {
 
@@ -53,6 +54,7 @@ public class EventController {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     @PutMapping("/updateEvent/{id}")
     public ResponseEntity<ApiResponse> updateEvent(@Valid @RequestBody Events event, @PathVariable("id") int id) {
 
@@ -69,6 +71,7 @@ public class EventController {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     @DeleteMapping("/deleteEvent/{id}")
     public ResponseEntity<ApiResponse> deleteEvent(@Valid @PathVariable("id") int id) {
         try {

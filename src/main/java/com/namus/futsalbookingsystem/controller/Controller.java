@@ -50,13 +50,18 @@ public class Controller {
 
 
 
-
+    @PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/saveFutsal")
     public ResponseEntity<ApiResponse> saveFutsal(@Valid @RequestBody Futsal futsal) {
         try {
             Optional<Futsal> futsal1 = futsalRepository.findByPhone(futsal.getPhone());
             if (!futsal1.isEmpty()) {
                 ApiResponse apiResponse = new ApiResponse("Futsal with same phone number already exist", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            }
+            Futsal futsal2=futsalService.getFutsalByFutsalName(futsal.getFutsalName());
+            if (futsal2!=null) {
+                ApiResponse apiResponse = new ApiResponse("Futsal with same name number already exist", HttpStatus.BAD_REQUEST.value());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
             futsalService.saveFutsal(futsal);
@@ -73,11 +78,12 @@ public class Controller {
 
     }
 
+
     @GetMapping("/getFutsalDetails")
     public ResponseEntity<ApiResponse> listAllFutsal() {
         try {
-            List<Futsal> adminList = futsalService.getAllFutsalData();
-            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), adminList);
+            List<Futsal> futsalList = futsalService.getAllFutsalData();
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), futsalList);
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         } catch (Exception e) {
             ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -86,17 +92,17 @@ public class Controller {
         }
     }
 
-    @GetMapping("/getFutsalData")
-    public List<Futsal> getFutsalData() {
-        return futsalService.getAllFutsalData(); // Implement a service method to fetch the data
-    }
+//    @GetMapping("/getFutsalData")
+//    public List<Futsal> getFutsalData() {
+//        return futsalService.getAllFutsalData(); // Implement a service method to fetch the data
+//    }
 
 
 
 
 
 
-
+    @PreAuthorize("hasAuthority('Admin')")
     @GetMapping("/futsalDetails/{phone}")
     public ResponseEntity<ApiResponse> futsalDetails(@Valid @PathVariable("phone") long phone) {
 
@@ -112,7 +118,7 @@ public class Controller {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('Admin')")
     @PutMapping("/updateFutsal/{phone}")
     public ResponseEntity<ApiResponse> updateFutsal(@Valid @RequestBody Futsal futsal, @PathVariable("phone") long phone) {
 
@@ -128,7 +134,7 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }
-
+    @PreAuthorize("hasAuthority('Admin')")
     @DeleteMapping("/deleteFutsal/{phone}")
     public ResponseEntity<ApiResponse> deleteFutsal(@Valid @PathVariable("phone") long phone) {
         try {
@@ -146,15 +152,15 @@ public class Controller {
     }
 
 
-
+   @PreAuthorize("hasAuthority('User')")
     @PostMapping("/bookFutsal")
-    public ResponseEntity<ApiResponse> bookFutsal(@Valid @RequestBody BookingInfo bookingInfo) {
+    public ResponseEntity<ApiResponse> bookFutsal(@RequestBody BookingInfo bookingInfo) {
         try {
             futsalService.bookFutsal(bookingInfo);
             Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
             long phone=futsal.getPhone();
             List<AppUser> user=userService.getUserByPhoneNumber(phone);
-            Set<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();
+            List<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();
 
             try {
                 for(String deviceToken:futsalDeviceToken) {
@@ -188,6 +194,7 @@ public class Controller {
         }
     }
 
+    @PreAuthorize("hasAuthority('User')")
     @PostMapping("/registerTeam")
     public ResponseEntity<ApiResponse> registerTeam(@Valid @RequestBody RegisterTeam registerTeam) {
         try {
@@ -204,6 +211,7 @@ public class Controller {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     @GetMapping("/eventDetailsAccordingToFutsalName/{futsalName}")
     public ResponseEntity<ApiResponse> eventDetailsAccordingToFutsalName(@PathVariable("futsalName") String futsalName) {
 
@@ -218,6 +226,7 @@ public class Controller {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @GetMapping("/registerationDetailAccordingToFutsalName/{futsalName}")
     public ResponseEntity<ApiResponse> regDetailsByFutsal(@PathVariable("futsalName") String futsalName) {
 
