@@ -155,7 +155,7 @@ public class UserController {
     }
 
 
-    @PostMapping("getAdminDetails")
+    @PostMapping("/getAdminDetails")
     public ResponseEntity<ApiResponse> listAllAdmin() {
         try {
             List<AppUser> adminList = service.getAdminDetails();
