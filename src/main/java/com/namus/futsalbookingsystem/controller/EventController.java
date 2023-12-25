@@ -39,7 +39,7 @@ public class EventController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
+    //@PreAuthorize("hasAuthority('Admin')")
     @GetMapping("/eventDetails")
     public ResponseEntity<ApiResponse> eventDetails() {
 
