@@ -39,7 +39,7 @@ public class EventController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
+    //@PreAuthorize("hasAuthority('Admin')")
     @GetMapping("/eventDetails")
     public ResponseEntity<ApiResponse> eventDetails() {
 
@@ -83,6 +83,21 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
         } catch (Exception e) {
             ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping("/eventDetailsAccordingToFutsalName/{futsalName}")
+    public ResponseEntity<ApiResponse> eventDetailsAccordingToFutsalName(@PathVariable("futsalName") String futsalName) {
+
+        try {
+            List<Events> eventsList= futsalService.getEventAccordingToFutsalName(futsalName);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), eventsList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }
