@@ -87,4 +87,19 @@ public class EventController {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping("/eventDetailsAccordingToFutsalName/{futsalName}")
+    public ResponseEntity<ApiResponse> eventDetailsAccordingToFutsalName(@PathVariable("futsalName") String futsalName) {
+
+        try {
+            List<Events> eventsList= futsalService.getEventAccordingToFutsalName(futsalName);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), eventsList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
 }
