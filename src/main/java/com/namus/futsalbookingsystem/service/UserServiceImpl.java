@@ -162,6 +162,19 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
 
     }
 
+    @Override
+    public String saveSuperAdmin(AppUser appUser) {
+        try{
+            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            appUser.setRole("SuperAdmin");
+            appUser.setUserName(appUser.getName() + appUser.getPhone());
+            userRepository.save(appUser);
+            return "saved";
+        }catch(Exception e){
+            return e.toString();
+        }
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

@@ -22,6 +22,9 @@ public interface UserService{
     public void updateAdminProfile(EditAdminProfile editAdminProfile, long phone);
 
 
+    public String saveSuperAdmin(AppUser appUser);
+
+
 
 }
 
