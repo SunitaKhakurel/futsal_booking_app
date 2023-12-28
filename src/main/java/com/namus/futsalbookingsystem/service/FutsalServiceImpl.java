@@ -11,6 +11,8 @@ import com.namus.futsalbookingsystem.repository.RegisterTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,6 +133,15 @@ public class FutsalServiceImpl implements FutsalService {
     @Override
     public void bookFutsal(BookingInfo bookingInfo) {
         bookingInfoRepository.save(bookingInfo);
+    }
+
+    @Override
+    public List<BookingInfo> getBookingInfo(String futsalName) {
+
+        List<BookingInfo> bookingInfoList = bookingInfoRepository.getByFutsalName(futsalName);
+                Collections.sort(bookingInfoList, Comparator.comparingInt(BookingInfo::getId).reversed());
+
+        return bookingInfoList;
     }
 
 
