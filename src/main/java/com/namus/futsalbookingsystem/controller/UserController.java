@@ -169,7 +169,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
-    @PostMapping("/editAppUserProfile/{phone}")
+    @PostMapping("/editAdminProfile/{phone}")
     public ResponseEntity<ApiResponse> updateAppUser(@Valid @RequestBody EditAdminProfile editAdminProfile, @PathVariable("phone") long phone) {
 
         try {
@@ -204,7 +204,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('Admin') OR hasAuthority('SuperAdmin') OR hasAuthority('User') ")
-    @GetMapping("/userDetails/{phone}")
+    @GetMapping("/adminDetails/{phone}")
     public ResponseEntity<ApiResponse> userDetails(@Valid @PathVariable("phone") long phone) {
 
         try {
