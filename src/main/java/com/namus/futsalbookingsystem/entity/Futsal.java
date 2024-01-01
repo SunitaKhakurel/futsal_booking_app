@@ -10,25 +10,26 @@ import java.util.List;
 public class Futsal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private  int id;
+     private  int id;
+
     @Column(unique = true)
     @NotBlank(message = "Futsal name cannot be blank")
     private String futsalName;
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email cannot be blank")
-   private String email;
+    private String email;
 
     @NotBlank(message = "Address cannot be blank")
-   private String address;
+     private String address;
 
     @Column(unique = true)
     @NotNull(message = "Phone cannot be null")
     @Positive(message = "Phone must be a positive number")
-   private long phone;
+     private long phone;
 
     @NotBlank(message = "Time cannot be blank")
-  private String openingTime;
+    private String openingTime;
 
     @NotBlank(message = "Time cannot be blank")
     private String closingTime;
@@ -75,6 +76,9 @@ public class Futsal {
 
     @ElementCollection
    private List<String> service;
+   
+   @ElementCollection
+   private List<String> availableTimeList;
 
     @NotBlank(message = "About Futsal cannot be blank")
    private String aboutFutsal;
@@ -119,8 +123,6 @@ public class Futsal {
         this.phone = phone;
     }
 
-
-
     public float getPrice() {
         return price;
     }
@@ -128,9 +130,6 @@ public class Futsal {
     public void setPrice(float price) {
         this.price = price;
     }
-
-
-
 
     public String getAboutFutsal() {
         return aboutFutsal;
