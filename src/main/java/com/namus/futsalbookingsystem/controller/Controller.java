@@ -134,7 +134,7 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }
-    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('SuperAdmin')")
     @DeleteMapping("/deleteFutsal/{phone}")
     public ResponseEntity<ApiResponse> deleteFutsal(@Valid @PathVariable("phone") long phone) {
         try {
@@ -153,7 +153,7 @@ public class Controller {
 
 
    @PreAuthorize("hasAuthority('User')")
-    @PostMapping("/bookFutsal")
+   @PostMapping("/bookFutsal")
     public ResponseEntity<ApiResponse> bookFutsal(@RequestBody BookingInfo bookingInfo) {
         try {
             futsalService.bookFutsal(bookingInfo);
@@ -194,7 +194,21 @@ public class Controller {
         }
     }
 
-    @PreAuthorize("hasAuthority('User')")
+    @GetMapping("/bookingInfoAccToFutsalName/{futsalName}")
+    public ResponseEntity<ApiResponse> bookingInfoAccToFutsalName(@PathVariable("futsalName") String futsalName) {
+
+        try {
+            List<BookingInfo> bookingInfoList=futsalService.getBookingInfo(futsalName);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), bookingInfoList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @PostMapping("/registerTeam")
     public ResponseEntity<ApiResponse> registerTeam(@Valid @RequestBody RegisterTeam registerTeam) {
         try {
@@ -211,20 +225,7 @@ public class Controller {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
-    @GetMapping("/eventDetailsAccordingToFutsalName/{futsalName}")
-    public ResponseEntity<ApiResponse> eventDetailsAccordingToFutsalName(@PathVariable("futsalName") String futsalName) {
 
-        try {
-            List<Events> eventsList= futsalService.getEventAccordingToFutsalName(futsalName);
-
-            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), eventsList);
-            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-        } catch (Exception e) {
-            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
-        }
-    }
 
     @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @GetMapping("/registerationDetailAccordingToFutsalName/{futsalName}")

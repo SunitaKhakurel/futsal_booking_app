@@ -111,7 +111,7 @@ public class UserController {
     }
 
     //Admin
-
+    @PreAuthorize("hasAuthority('SuperAdmin')")
     @PostMapping("/addNewAdmin")
     public ResponseEntity<ApiResponse> addNewAdmin(@Valid @RequestBody AppUser appUser) {
         System.out.println("user" + appUser.getUserName());
@@ -155,7 +155,7 @@ public class UserController {
     }
 
 
-    @PostMapping("getAdminDetails")
+    @PostMapping("/getAdminDetails")
     public ResponseEntity<ApiResponse> listAllAdmin() {
         try {
             List<AppUser> adminList = service.getAdminDetails();
@@ -168,9 +168,9 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @PostMapping("/editAdminProfile/{phone}")
-    public ResponseEntity<ApiResponse> updateAdmin(@Valid @RequestBody EditAdminProfile editAdminProfile, @PathVariable("phone") long phone) {
+    public ResponseEntity<ApiResponse> updateAppUser(@Valid @RequestBody EditAdminProfile editAdminProfile, @PathVariable("phone") long phone) {
 
         try {
             service.updateAdminProfile(editAdminProfile,phone);
@@ -185,7 +185,7 @@ public class UserController {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('SuperAdmin')")
     @PostMapping("/deleteAdmin")
     public ResponseEntity<ApiResponse> deleteAdmin(@Valid @RequestBody AppUser appUser) {
         System.out.println("hello");
@@ -203,9 +203,9 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Admin') OR hasAuthority('SuperAdmin') OR hasAuthority('User') ")
     @GetMapping("/adminDetails/{phone}")
-    public ResponseEntity<ApiResponse> adminDetails(@Valid @PathVariable("phone") long phone) {
+    public ResponseEntity<ApiResponse> userDetails(@Valid @PathVariable("phone") long phone) {
 
         try {
 
@@ -231,6 +231,30 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
         } catch (Exception e) {
             ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+
+    //
+
+    @PostMapping("/addNewSuperAdmin")
+    public ResponseEntity<ApiResponse> addNewSuperAdmin(@Valid @RequestBody AppUser appUser) {
+        try {
+            List<AppUser> list = userRepository.findByPhone(appUser.getPhone());
+            if (!list.isEmpty()) {
+                ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            }
+            service.saveSuperAdmin(appUser);
+            ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
+        } catch (ValidationException v) {
+
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }

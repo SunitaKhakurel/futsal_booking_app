@@ -27,6 +27,7 @@ public interface FutsalService {
     public List<RegisterTeam> getregInfoByFutsalName(String futsalName);
 
     public void bookFutsal(BookingInfo bookingInfo);
+    public List<BookingInfo> getBookingInfo(String futsalName);
 }
 
 
