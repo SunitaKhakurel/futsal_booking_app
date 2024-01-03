@@ -157,7 +157,7 @@ try {
 
         // Reset the availableTimeList
         futsal.setAvailableTimeList(new ArrayList<>(originalAvailableTimeList));
-        futsal.setAddress("ktm");
+
 
         futsalRepository.save(futsal);
 
