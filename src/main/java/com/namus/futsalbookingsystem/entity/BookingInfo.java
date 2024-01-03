@@ -1,10 +1,8 @@
 package com.namus.futsalbookingsystem.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
 
 @Entity
 public class BookingInfo {
@@ -36,6 +34,17 @@ public class BookingInfo {
 
 
     private String venueCharge;
+
+    public List<String> getBookingTimeList() {
+        return bookingTimeList;
+    }
+
+    public void setBookingTimeList(List<String> bookingTimeList) {
+        this.bookingTimeList = bookingTimeList;
+    }
+
+    @ElementCollection
+    private List<String> bookingTimeList;
 
     public String getMessageBody() {
         return messageBody;

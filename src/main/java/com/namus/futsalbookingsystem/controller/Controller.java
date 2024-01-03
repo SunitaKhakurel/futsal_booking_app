@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -64,7 +65,10 @@ public class Controller {
                 ApiResponse apiResponse = new ApiResponse("Futsal with same name number already exist", HttpStatus.BAD_REQUEST.value());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
+            futsal.setAvailableTimeList(futsal.getOriginalTimeList());
             futsalService.saveFutsal(futsal);
+            LocalTime currentTime = LocalTime.now();
+            System.out.println("Current time: " + currentTime);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         } catch (ValidationException v) {
@@ -158,6 +162,14 @@ public class Controller {
         try {
             futsalService.bookFutsal(bookingInfo);
             Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
+            List<String> availableTimeList=futsal.getAvailableTimeList();
+            List<String> bookingTimeList=bookingInfo.getBookingTimeList();
+            availableTimeList.removeIf(bookingTimeList::contains);
+            System.out.println("a="+availableTimeList);
+            System.out.println("b="+bookingTimeList);
+            futsal.setAvailableTimeList(availableTimeList);
+            futsalService.saveFutsal(futsal);
+            System.out.println("hello");
             long phone=futsal.getPhone();
             List<AppUser> user=userService.getUserByPhoneNumber(phone);
             List<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();

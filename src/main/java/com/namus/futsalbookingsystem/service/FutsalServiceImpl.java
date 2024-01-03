@@ -8,13 +8,13 @@ import com.namus.futsalbookingsystem.repository.BookingInfoRepository;
 import com.namus.futsalbookingsystem.repository.EventRepository;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import com.namus.futsalbookingsystem.repository.RegisterTeamRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FutsalServiceImpl implements FutsalService {
@@ -144,5 +144,27 @@ public class FutsalServiceImpl implements FutsalService {
         return bookingInfoList;
     }
 
+    @Scheduled(cron = "0 0 0 * * *") // Run at midnight every day
+    public void resetAvailableTimeList() {
+        // Retrieve all Futsal entities
+        List<Futsal> allFutsals = futsalRepository.findAll();
+try {
+    // Reset the availableTimeList for each Futsal
+    for (Futsal futsal : allFutsals) {
+        List<String> originalAvailableTimeList = futsal.getOriginalTimeList();
+
+        originalAvailableTimeList.size(); // Force initialization
+
+        // Reset the availableTimeList
+        futsal.setAvailableTimeList(new ArrayList<>(originalAvailableTimeList));
+        futsal.setAddress("ktm");
+
+        futsalRepository.save(futsal);
+
+    }
+}catch (Exception e){
+    System.out.println(e);
+}
+    }
 
 }

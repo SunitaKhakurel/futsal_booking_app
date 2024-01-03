@@ -206,7 +206,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('Admin') OR hasAuthority('SuperAdmin') OR hasAuthority('User') ")
     @GetMapping("/adminDetails/{phone}")
     public ResponseEntity<ApiResponse> userDetails(@Valid @PathVariable("phone") long phone) {
-
         try {
 
             List<AppUser> appUsers = service.getUserByPhoneNumber(phone);
@@ -219,7 +218,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')  OR hasAuthority('SuperAdmin')")
     @PostMapping("/changePassword/{phone}")
     public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, @PathVariable("phone") long phone){
         try {
@@ -236,7 +235,7 @@ public class UserController {
     }
 
 
-    //
+
 
     @PostMapping("/addNewSuperAdmin")
     public ResponseEntity<ApiResponse> addNewSuperAdmin(@Valid @RequestBody AppUser appUser) {
