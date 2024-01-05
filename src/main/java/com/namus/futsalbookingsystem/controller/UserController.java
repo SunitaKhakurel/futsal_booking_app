@@ -258,4 +258,22 @@ public class UserController {
         }
     }
 
+
+    @GetMapping("/adminDetailsAccToEmail/{email}")
+    public ResponseEntity<ApiResponse> userDetailsAccToEmail(@PathVariable("email") String email) {
+        try {
+
+            AppUser appUser = service.getUserDetailsAccToEmail(email);
+            if(appUser!= null) {
+                ApiResponse apiResponse = new ApiResponse("User Found", HttpStatus.OK.value());
+                return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+            }else{
+                ApiResponse apiResponse = new ApiResponse("User Not Found", HttpStatus.UNAUTHORIZED.value());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiResponse);
+            }
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
 }

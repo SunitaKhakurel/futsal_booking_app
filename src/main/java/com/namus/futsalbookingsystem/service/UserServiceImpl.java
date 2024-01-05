@@ -175,6 +175,12 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         }
     }
 
+    @Override
+    public AppUser getUserDetailsAccToEmail(String email) {
+        Optional<AppUser> appUser=userRepository.findByEmail(email);
+        return appUser.orElse(null);
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

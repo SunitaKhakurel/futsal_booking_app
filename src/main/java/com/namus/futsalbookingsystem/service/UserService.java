@@ -24,6 +24,8 @@ public interface UserService{
 
     public String saveSuperAdmin(AppUser appUser);
 
+    AppUser getUserDetailsAccToEmail(String email);
+
 
 
 }
