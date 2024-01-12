@@ -144,6 +144,15 @@ public class FutsalServiceImpl implements FutsalService {
         return bookingInfoList;
     }
 
+    @Override
+    public void updateBookingInfoStatus(BookingInfo bookingInfo) {
+        BookingInfo bookingInfo1=bookingInfoRepository.getById(bookingInfo.getId());
+        if(bookingInfo1!=null){
+            bookingInfo1.setStatus(bookingInfo.getStatus());
+            bookingInfoRepository.save(bookingInfo1);
+        }
+    }
+
     @Scheduled(cron = "0 0 0 * * *") // Run at midnight every day
     public void resetAvailableTimeList() {
         // Retrieve all Futsal entities

@@ -46,6 +46,12 @@ public class UserController {
                 ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
+            AppUser appUser1=service.getUserDetailsAccToEmail(appUser.getEmail());
+            if(appUser1!=null){
+                ApiResponse apiResponse = new ApiResponse("User With Email already exist", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            }
+
             service.saveUser(appUser);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
@@ -138,6 +144,12 @@ public class UserController {
                     ApiResponse apiResponse = new ApiResponse("user already exist", HttpStatus.BAD_REQUEST.value());
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
                 }
+                AppUser appUser1=service.getUserDetailsAccToEmail(appUser.getEmail());
+                if(appUser1!=null){
+                    ApiResponse apiResponse = new ApiResponse("User With Email already exist", HttpStatus.BAD_REQUEST.value());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                }
+
 
                 service.saveAdmin(appUser);
 
@@ -268,8 +280,8 @@ public class UserController {
                 ApiResponse apiResponse = new ApiResponse("User Found", HttpStatus.OK.value());
                 return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
             }else{
-                ApiResponse apiResponse = new ApiResponse("User Not Found", HttpStatus.UNAUTHORIZED.value());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiResponse);
+                ApiResponse apiResponse = new ApiResponse("User Not Found", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
         } catch (Exception e) {
             ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
