@@ -34,22 +34,15 @@ import java.util.stream.Collectors;
 @RestController
 @Validated
 public class Controller {
-
-
-
     @Autowired
     FutsalService futsalService;
-
-
 
     @Autowired
     private FutsalRepository futsalRepository;
     @Autowired
     private UserService userService;
 
-
-
-
+    
     @PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/saveFutsal")
     public ResponseEntity<ApiResponse> saveFutsal(@Valid @RequestBody Futsal futsal) {
