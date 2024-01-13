@@ -1,4 +1,6 @@
 package com.namus.futsalbookingsystem.entity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -33,6 +35,28 @@ public class Futsal {
     @NotBlank(message = "Time cannot be blank")
     private String closingTime;
 
+    @ElementCollection
+    @Cascade(value = CascadeType.ALL)
+    private List<String> availableTimeList;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> originalTimeList;
+
+    public List<String> getOriginalTimeList() {
+        return originalTimeList;
+    }
+
+    public void setOriginalTimeList(List<String> originalTimeList) {
+        this.originalTimeList = originalTimeList;
+    }
+
+    public List<String> getAvailableTimeList() {
+        return availableTimeList;
+    }
+
+    public void setAvailableTimeList(List<String> availableTimeList) {
+        this.availableTimeList = availableTimeList;
+    }
 
     public String getOpeningTime() {
         return openingTime;

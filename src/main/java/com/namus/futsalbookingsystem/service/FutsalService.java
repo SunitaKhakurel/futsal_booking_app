@@ -28,6 +28,8 @@ public interface FutsalService {
 
     public void bookFutsal(BookingInfo bookingInfo);
     public List<BookingInfo> getBookingInfo(String futsalName);
+
+    public void updateBookingInfoStatus(BookingInfo bookingInfo);
 }
 
 

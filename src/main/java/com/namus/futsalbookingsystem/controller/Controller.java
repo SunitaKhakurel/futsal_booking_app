@@ -3,6 +3,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.namus.futsalbookingsystem.App;
 import com.namus.futsalbookingsystem.entity.*;
 import com.namus.futsalbookingsystem.repository.FutsalRepository;
 import com.namus.futsalbookingsystem.repository.UserRepository;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -64,7 +66,10 @@ public class Controller {
                 ApiResponse apiResponse = new ApiResponse("Futsal with same name number already exist", HttpStatus.BAD_REQUEST.value());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
+            futsal.setAvailableTimeList(futsal.getOriginalTimeList());
             futsalService.saveFutsal(futsal);
+            LocalTime currentTime = LocalTime.now();
+            System.out.println("Current time: " + currentTime);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
         } catch (ValidationException v) {
@@ -158,6 +163,14 @@ public class Controller {
         try {
             futsalService.bookFutsal(bookingInfo);
             Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
+            List<String> availableTimeList=futsal.getAvailableTimeList();
+            List<String> bookingTimeList=bookingInfo.getBookingTimeList();
+            availableTimeList.removeIf(bookingTimeList::contains);
+            System.out.println("a="+availableTimeList);
+            System.out.println("b="+bookingTimeList);
+            futsal.setAvailableTimeList(availableTimeList);
+            futsalService.saveFutsal(futsal);
+            System.out.println("hello");
             long phone=futsal.getPhone();
             List<AppUser> user=userService.getUserByPhoneNumber(phone);
             List<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();
@@ -194,6 +207,47 @@ public class Controller {
         }
     }
 
+    @PutMapping("/acceptBookingInfo")
+    public ResponseEntity<ApiResponse> acceptBookingInfo(@Valid @RequestBody BookingInfo bookingInfo) {
+
+        try {
+            List<AppUser> user=userService.getUserByPhoneNumber(bookingInfo.getContact());
+            List<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();
+
+
+                try {
+
+                    for(String deviceToken:futsalDeviceToken) {
+                        Message message = Message.builder()
+                                .setToken(deviceToken)
+                                .setNotification(Notification.builder()
+                                        .setTitle(bookingInfo.getTitle())
+                                        .setBody(bookingInfo.getMessageBody())
+                                        .build()).putData("futsalName", bookingInfo.getFutsalName())
+                                .build();
+
+                        String response = FirebaseMessaging.getInstance().send(message);
+                    }
+                }
+                catch (FirebaseMessagingException e) {
+                    String errorMessage = "Error sending notification: " + e.getMessage();
+                    ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value(),errorMessage);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                }
+
+                futsalService.updateBookingInfoStatus(bookingInfo);
+
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (ValidationException v) {
+            ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
     @GetMapping("/bookingInfoAccToFutsalName/{futsalName}")
     public ResponseEntity<ApiResponse> bookingInfoAccToFutsalName(@PathVariable("futsalName") String futsalName) {
 
@@ -207,6 +261,8 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }
+
+
 
     @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @PostMapping("/registerTeam")
