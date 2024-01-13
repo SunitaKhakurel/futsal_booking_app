@@ -22,7 +22,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -37,19 +36,14 @@ import java.util.stream.Collectors;
 @Validated
 public class Controller {
 
-
-
     @Autowired
     FutsalService futsalService;
-
 
 
     @Autowired
     private FutsalRepository futsalRepository;
     @Autowired
     private UserService userService;
-
-
 
 
     @PreAuthorize("hasAuthority('Admin')")
@@ -213,10 +207,7 @@ public class Controller {
         try {
             List<AppUser> user=userService.getUserByPhoneNumber(bookingInfo.getContact());
             List<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();
-
-
                 try {
-
                     for(String deviceToken:futsalDeviceToken) {
                         Message message = Message.builder()
                                 .setToken(deviceToken)

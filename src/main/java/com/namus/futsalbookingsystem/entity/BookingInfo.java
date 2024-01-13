@@ -29,14 +29,14 @@ public class BookingInfo {
 
     private String title;
 
-    private String Status;
+    private String status;
 
     public String getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(String status) {
-        Status = status;
+        status = status;
     }
 
     private String venueCharge;

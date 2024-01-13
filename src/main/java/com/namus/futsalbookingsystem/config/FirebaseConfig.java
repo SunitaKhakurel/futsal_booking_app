@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class FirebaseConfig {
     public static void initializeFirebase() throws IOException {
-        FileInputStream serviceAccount = new FileInputStream("C:\\Users\\Musi\\IdeaProjects\\futsalbookingsystem\\src\\main\\resources\\firebase.json");
+        FileInputStream serviceAccount = new FileInputStream("/home/beejoy/futsal_booking_app/src/main/resources/firebase.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
