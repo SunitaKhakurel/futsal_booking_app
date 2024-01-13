@@ -219,7 +219,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @PostMapping("/changePassword/{phone}")
     public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest, @PathVariable("phone") long phone){
         try {

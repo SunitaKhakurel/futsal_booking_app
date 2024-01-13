@@ -58,7 +58,14 @@ public class Futsal {
     public void setService(List<String> service) {
         this.service = service;
     }
+       
+    public List<String> getAvailableTimeList(){
+return availableTimeList;
+}
 
+public void setAvailableTimeList(List<String> availableTimeList){
+ this.availableTimeList=availableTimeList;
+}
     @Positive(message = "Price must be a positive number")
     private float price;
 
