@@ -1,9 +1,6 @@
 package com.namus.futsalbookingsystem.controller;
 
-import com.namus.futsalbookingsystem.entity.AppUser;
-import com.namus.futsalbookingsystem.entity.AuthResult;
-import com.namus.futsalbookingsystem.entity.EditAdminProfile;
-import com.namus.futsalbookingsystem.entity.PasswordChangeRequest;
+import com.namus.futsalbookingsystem.entity.*;
 import com.namus.futsalbookingsystem.repository.UserRepository;
 import com.namus.futsalbookingsystem.response.ApiResponse;
 import com.namus.futsalbookingsystem.service.JwtService;
@@ -91,8 +88,11 @@ public class UserController {
 
 
     @PostMapping("/forgotPassword")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody AppUser appUser) {
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody ForgotPassword forgotPassword) {
         try {
+            AppUser appUser=new AppUser();
+            appUser.setPhone(forgotPassword.getPhone());
+            appUser.setPassword(forgotPassword.getPassword());
             String message = service.changePassword(appUser);
             ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);

@@ -213,8 +213,7 @@ public class Controller {
         try {
             List<AppUser> user=userService.getUserByPhoneNumber(bookingInfo.getContact());
             List<String> futsalDeviceToken=user.get(0).getFutsalDeviceToken();
-
-
+             
                 try {
 
                     for(String deviceToken:futsalDeviceToken) {
