@@ -87,16 +87,19 @@ public class UserController {
 
 
 
-    @PostMapping("/forgotPassword")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody ForgotPassword forgotPassword) {
+    @PostMapping("/forgotPassword/{email}")
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody ForgotPassword forgotPassword,@PathVariable("email") String email) {
         try {
-            AppUser appUser=new AppUser();
-            appUser.setPhone(forgotPassword.getPhone());
-            appUser.setPassword(forgotPassword.getPassword());
-            String message = service.changePassword(appUser);
-            ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
-            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-        } catch (ValidationException v) {
+            AppUser appUser=service.getUserDetailsAccToEmail(email);
+            if(appUser!= null) {
+
+                String message = service.changePassword(appUser,forgotPassword.getNewpassword());
+                ApiResponse apiResponse = new ApiResponse(message, HttpStatus.OK.value());
+                return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+            }else{
+                ApiResponse apiResponse = new ApiResponse("User Not Found", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            } } catch (ValidationException v) {
             ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
         } catch (Exception e) {

@@ -57,11 +57,11 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
        }
 
     @Override
-    public String changePassword(AppUser appUser) {
+    public String changePassword(AppUser appUser,String newPassword) {
         List<AppUser> appUsers =userRepository.findByPhone(appUser.getPhone());
         AppUser appUserDetails = appUsers.get(0);
         if(appUserDetails !=null){
-            appUserDetails.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            appUserDetails.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(appUserDetails);
             return "Password updated";
         }else{

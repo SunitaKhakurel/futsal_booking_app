@@ -9,29 +9,17 @@ import javax.validation.constraints.Size;
 public class ForgotPassword {
 
 
-    @Column(unique = true)
-    @NotNull(message = "Phone cannot be null")
-    @Positive(message = "Phone must be a positive number")
-    private Long phone;
 
 
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 8, message = "Password must be at least 8 characters")
-    private String password;
+    private String newpassword;
 
-    public Long getPhone() {
-        return phone;
+    public String getNewpassword() {
+        return newpassword;
     }
 
-    public void setPhone(Long phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setNewpassword(String newpassword) {
+        this.newpassword = newpassword;
     }
 }
