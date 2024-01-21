@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FutsalServiceImpl implements FutsalService {
@@ -142,6 +143,18 @@ public class FutsalServiceImpl implements FutsalService {
                 Collections.sort(bookingInfoList, Comparator.comparingInt(BookingInfo::getId).reversed());
 
         return bookingInfoList;
+    }
+
+    @Override
+    public List<BookingInfo> getAcceptedBookingInfo(String futsalName) {
+        List<BookingInfo> bookingInfoList = bookingInfoRepository.getByFutsalName(futsalName);
+        List<BookingInfo> acceptedBookings = bookingInfoList.stream()
+                .filter(bookingInfo -> "Accepted".equals(bookingInfo.getStatus())) // Assuming the status is a String
+                .collect(Collectors.toList());
+
+// Sort the filtered list by id in reverse order
+        Collections.sort(acceptedBookings, Comparator.comparingInt(BookingInfo::getId).reversed());
+        return acceptedBookings;
     }
 
     @Override

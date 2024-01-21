@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserService{
     public String saveUser(AppUser appUser);
     public AuthResult findUserByPhoneAndPassword(AppUser appUser);
-    public String changePassword(AppUser appUser);
+    public String changePassword(AppUser appUser,String newPassword);
     public List<AppUser> getUserByPhoneNumber(long phone);
     public String changePassword(PasswordChangeRequest passwordChangeRequest,long phone);
 
