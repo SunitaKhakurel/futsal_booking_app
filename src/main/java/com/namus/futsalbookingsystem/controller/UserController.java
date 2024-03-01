@@ -170,9 +170,10 @@ public class UserController {
     }
 
 
-    @PostMapping("/getAdminDetails")
+    @GetMapping("/getAdminDetails")
     public ResponseEntity<ApiResponse> listAllAdmin() {
         try {
+            System.out.println("hello");
             List<AppUser> adminList = service.getAdminDetails();
             ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), adminList);
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);

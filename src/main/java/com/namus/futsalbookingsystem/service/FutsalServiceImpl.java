@@ -158,6 +158,19 @@ public class FutsalServiceImpl implements FutsalService {
     }
 
     @Override
+    public List<BookingInfo> getAcceptedBookingInfoAccphoneno(Long phone) {
+        List<BookingInfo> bookingInfoList=bookingInfoRepository.getByContact(phone);
+
+        List<BookingInfo> acceptedBookings = bookingInfoList.stream()
+                .filter(bookingInfo -> "Accepted".equals(bookingInfo.getStatus())) // Assuming the status is a String
+                .collect(Collectors.toList());
+
+// Sort the filtered list by id in reverse order
+        Collections.sort(acceptedBookings, Comparator.comparingInt(BookingInfo::getId).reversed());
+        return acceptedBookings;
+    }
+
+    @Override
     public void updateBookingInfoStatus(BookingInfo bookingInfo) {
         BookingInfo bookingInfo1=bookingInfoRepository.getById(bookingInfo.getId());
         if(bookingInfo1!=null){

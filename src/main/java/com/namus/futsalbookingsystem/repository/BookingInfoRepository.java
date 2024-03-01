@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface BookingInfoRepository extends JpaRepository<BookingInfo,Integer> {
     List<BookingInfo> getByFutsalName(String futsalName);
-
+    List<BookingInfo> getByContact(Long phone);
 }

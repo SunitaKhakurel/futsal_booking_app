@@ -31,6 +31,8 @@ public interface FutsalService {
 
     public List<BookingInfo> getAcceptedBookingInfo(String futsalName);
 
+    public List<BookingInfo> getAcceptedBookingInfoAccphoneno(Long phone);
+
     public void updateBookingInfoStatus(BookingInfo bookingInfo);
 }
 

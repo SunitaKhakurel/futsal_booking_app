@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @Validated
+@CrossOrigin(origins = "*",allowedHeaders = "*S")
 public class Controller {
 
 
@@ -161,7 +162,7 @@ public class Controller {
    @PostMapping("/bookFutsal")
     public ResponseEntity<ApiResponse> bookFutsal(@RequestBody BookingInfo bookingInfo) {
         try {
-            futsalService.bookFutsal(bookingInfo);
+
             Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
             List<String> availableTimeList=futsal.getAvailableTimeList();
             List<String> bookingTimeList=bookingInfo.getBookingTimeList();
@@ -193,7 +194,7 @@ public class Controller {
                 ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value(),errorMessage);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
             }
-
+            futsalService.bookFutsal(bookingInfo);
             ApiResponse apiResponse = new ApiResponse("Success", HttpStatus.OK.value());
 
             return ResponseEntity.status(HttpStatus.OK).body((apiResponse));
@@ -275,7 +276,19 @@ public class Controller {
         }
     }
 
+    @PreAuthorize("hasAuthority('User')")
+    @GetMapping("/acceptedBookingInfoAccToPhoneno/{phoneno}")
+    public ResponseEntity<ApiResponse> acceptedBookingInfoAccToPhoneno(@PathVariable("phoneno") Long phoneno) {
 
+        try {
+            List<BookingInfo> bookingInfoList=futsalService.getAcceptedBookingInfoAccphoneno(phoneno);
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), bookingInfoList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
 
     @PreAuthorize("hasAuthority('Admin') OR hasAuthority('User')")
     @PostMapping("/registerTeam")
