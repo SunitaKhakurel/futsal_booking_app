@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @Validated
-@CrossOrigin(origins = "*",allowedHeaders = "*S")
 public class Controller {
 
 
@@ -140,8 +139,10 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
         }
     }
+
+    @CrossOrigin
     @PreAuthorize("hasAuthority('SuperAdmin')")
-    @DeleteMapping("/deleteFutsal/{phone}")
+    @PostMapping("/deleteFutsal/{phone}")
     public ResponseEntity<ApiResponse> deleteFutsal(@Valid @PathVariable("phone") long phone) {
         try {
             System.out.println(phone);
@@ -166,11 +167,27 @@ public class Controller {
             Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
             List<String> availableTimeList=futsal.getAvailableTimeList();
             List<String> bookingTimeList=bookingInfo.getBookingTimeList();
-            availableTimeList.removeIf(bookingTimeList::contains);
+
             System.out.println("a="+availableTimeList);
             System.out.println("b="+bookingTimeList);
+
+            // Apply scheduling algorithm
+            for (String bookingTime : bookingTimeList) {
+                if (!availableTimeList.contains(bookingTime)) {
+
+                    System.out.println("Time slot " + bookingTime + " is already booked or unavailable.");
+                    ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                }
+            }
+            availableTimeList.removeIf(bookingTimeList::contains);
+
+            System.out.println("a="+availableTimeList);
+            System.out.println("b="+bookingTimeList);
+
             futsal.setAvailableTimeList(availableTimeList);
             futsalService.saveFutsal(futsal);
+
             System.out.println("hello");
             long phone=futsal.getPhone();
             List<AppUser> user=userService.getUserByPhoneNumber(phone);
@@ -227,7 +244,7 @@ public class Controller {
                                 .build();
 
                         String response = FirebaseMessaging.getInstance().send(message);
-                    }
+                     }
                 }
                 catch (FirebaseMessagingException e) {
                     String errorMessage = "Error sending notification: " + e.getMessage();
@@ -236,6 +253,9 @@ public class Controller {
                 }
 
                 futsalService.updateBookingInfoStatus(bookingInfo);
+                if(bookingInfo.getStatus()!="Accepted"){
+                    futsalService.updateAvailableTimeListAfterDecline(bookingInfo);
+                }
 
             ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -248,6 +268,56 @@ public class Controller {
         }
     }
 
+    @PutMapping("/declineBookingInfo")
+    public ResponseEntity<ApiResponse> declineBookingInfo(@Valid @RequestBody BookingInfo bookingInfo){
+        Futsal futsal=futsalService.getFutsalByFutsalName(bookingInfo.getFutsalName());
+        List<String> bookingTime=bookingInfo.getBookingTimeList();
+        String time=bookingTime.get(0);
+        boolean status=futsalService.isTimeBefore(bookingInfo.getDeclineTime(),time);
+        if(status){
+            try {
+                List<AppUser> user = userService.getUserByPhoneNumber(futsal.getPhone());
+                List<String> futsalDeviceToken = user.get(0).getFutsalDeviceToken();
+
+                try {
+
+                    for (String deviceToken : futsalDeviceToken) {
+                        Message message = Message.builder()
+                                .setToken(deviceToken)
+                                .setNotification(Notification.builder()
+                                        .setTitle(bookingInfo.getTitle())
+                                        .setBody(bookingInfo.getMessageBody())
+                                        .build()).putData("futsalName", bookingInfo.getFutsalName())
+                                .build();
+
+                        String response = FirebaseMessaging.getInstance().send(message);
+                    }
+                } catch (FirebaseMessagingException e) {
+                    String errorMessage = "Error sending notification: " + e.getMessage();
+                    ApiResponse apiResponse = new ApiResponse("Bad Request", HttpStatus.BAD_REQUEST.value(), errorMessage);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+                }
+
+                futsalService.updateBookingInfoStatus(bookingInfo);
+                futsalService.updateAvailableTimeListAfterDecline(bookingInfo);
+                if(bookingInfo.getPreviousStatus()=="Pending") {
+                    futsalService.deleteBookings(bookingInfo.getId());
+                }
+                ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value());
+                return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+            } catch (ValidationException v) {
+                ApiResponse apiResponse = new ApiResponse("You Cannot cancel bookings", HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            } catch (Exception e) {
+                ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+            }
+        }else{
+            ApiResponse apiResponse = new ApiResponse("You Cannot cancel bookings ", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        }
+
+    }
     @GetMapping("/bookingInfoAccToFutsalName/{futsalName}")
     public ResponseEntity<ApiResponse> bookingInfoAccToFutsalName(@PathVariable("futsalName") String futsalName) {
 
@@ -282,6 +352,20 @@ public class Controller {
 
         try {
             List<BookingInfo> bookingInfoList=futsalService.getAcceptedBookingInfoAccphoneno(phoneno);
+            ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), bookingInfoList);
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        } catch (Exception e) {
+            ApiResponse apiResponse = new ApiResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+    }
+
+    @PreAuthorize("hasAuthority('User')")
+    @GetMapping("/acceptedDeclinedBookingInfoAccToPhoneno/{phoneno}")
+    public ResponseEntity<ApiResponse> acceptedDeclinedBookingInfoAccToPhoneno(@PathVariable("phoneno") Long phoneno) {
+
+        try {
+            List<BookingInfo> bookingInfoList=futsalService.getAcceptedDeclinedBookingInfo(phoneno);
             ApiResponse apiResponse = new ApiResponse("success", HttpStatus.OK.value(), bookingInfoList);
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         } catch (Exception e) {

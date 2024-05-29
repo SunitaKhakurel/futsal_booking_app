@@ -36,10 +36,7 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         }catch(Exception e){
             return e.toString();
         }
-
     }
-
-
 
     @Override
     public AuthResult findUserByPhoneAndPassword(AppUser appUser) {
@@ -127,7 +124,6 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
                     appUser1.setUserName(appUser.getName()+ appUser.getPhone());
                     userRepository.save(appUser1);
                 }
-
     }
 
     @Override
@@ -147,7 +143,6 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
         userRepository.save(appUser2);
         }
     }
-
     @Override
     public void updateAdminProfile(EditAdminProfile appUser, long phone) {
         List<AppUser> appUser1=getUserByPhoneNumber(phone);
@@ -159,9 +154,7 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
            appUser2.setImage(appUser.getImage());
             userRepository.save(appUser2);
         }
-
     }
-
     @Override
     public String saveSuperAdmin(AppUser appUser) {
         try{
@@ -174,13 +167,11 @@ public class UserServiceImpl implements  UserService, UserDetailsService {
             return e.toString();
         }
     }
-
     @Override
     public AppUser getUserDetailsAccToEmail(String email) {
         Optional<AppUser> appUser=userRepository.findByEmail(email);
         return appUser.orElse(null);
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

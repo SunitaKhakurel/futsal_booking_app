@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @Validated
+@CrossOrigin
 public class UserController {
     @Autowired
     private UserService service;
@@ -120,7 +121,8 @@ public class UserController {
     }
 
     //Admin
-    @PreAuthorize("hasAuthority('SuperAdmin')")
+    @CrossOrigin
+   // @PreAuthorize("hasAuthority('SuperAdmin')")
     @PostMapping("/addNewAdmin")
     public ResponseEntity<ApiResponse> addNewAdmin(@Valid @RequestBody AppUser appUser) {
         System.out.println("user" + appUser.getUserName());
@@ -168,8 +170,7 @@ public class UserController {
             }
         }
     }
-
-
+    @CrossOrigin
     @GetMapping("/getAdminDetails")
     public ResponseEntity<ApiResponse> listAllAdmin() {
         try {
@@ -201,8 +202,8 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('SuperAdmin')")
-    @PostMapping("/deleteAdmin")
+   // @PreAuthorize("hasAuthority('SuperAdmin')")
+    @DeleteMapping("/deleteAdmin")
     public ResponseEntity<ApiResponse> deleteAdmin(@Valid @RequestBody AppUser appUser) {
         System.out.println("hello");
         try {

@@ -17,10 +17,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Configuration
@@ -43,9 +49,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/addNewUser", "/generateToken","/login","/forgotPassword/{email}","/loginAdmin","/addNewSuperAdmin","/adminDetailsAccToEmail/{email}","/getAdminDetails").permitAll()
+                .antMatchers("/addNewUser", "/generateToken","/login","/forgotPassword/{email}","/loginAdmin","/addNewSuperAdmin","/adminDetailsAccToEmail/{email}","/getAdminDetailsForSup","/getFutsalDetailsForSuperAdmin","/deleteFutsal/{phone}","/deleteAdmin","/addNewAdmin","/getAdminDetails").permitAll()
                 .antMatchers("/authenticate").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -53,6 +60,14 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+               // .headers()
+               // .frameOptions().sameOrigin()
+                //.httpStrictTransportSecurity().disable()
+                //.defaultsDisabled()
+                //.contentTypeOptions();
+               //.cacheControl();
+
+
 
         return http.build();
     }
@@ -61,6 +76,27 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("*"));
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+//        configuration.setExposedHeaders(Arrays.asList("x-auth-token", "x-content-type","x-content-type-options"));
+//
+//        // Add 'x-content-type-options' header
+//        configuration.addExposedHeader("x-content-type-options");
+//
+//        // Add 'X-Content-Type-Options' header to the response
+//        configuration.addExposedHeader("X-Content-Type-Options");
+//        // Add 'x-content-type-options' header
+//        configuration.addExposedHeader("x-content-type-options");
+//        configuration.addExposedHeader("Cache-Control");
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
 
 

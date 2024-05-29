@@ -32,9 +32,15 @@ public interface FutsalService {
     public List<BookingInfo> getAcceptedBookingInfo(String futsalName);
 
     public List<BookingInfo> getAcceptedBookingInfoAccphoneno(Long phone);
+    public void updateAvailableTimeListAfterDecline(BookingInfo bookingInfo);
 
     public void updateBookingInfoStatus(BookingInfo bookingInfo);
-}
 
+    public List<BookingInfo> getAcceptedDeclinedBookingInfo(Long phone);
+
+    public boolean isTimeBefore(String timeString, String compareTime);
+
+    public void deleteBookings(int id);
+}
 
 

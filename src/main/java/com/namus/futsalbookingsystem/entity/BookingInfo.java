@@ -1,5 +1,7 @@
 package com.namus.futsalbookingsystem.entity;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.List;
@@ -30,6 +32,24 @@ public class BookingInfo {
     private String title;
 
     private String Status;
+    private String declineTime;
+    private String previousStatus;
+
+    public String getPreviousStatus() {
+        return previousStatus;
+    }
+
+    public void setPreviousStatus(String previousStatus) {
+        this.previousStatus = previousStatus;
+    }
+
+    public String getDeclineTime() {
+        return declineTime;
+    }
+
+    public void setDeclineTime(String declineTime) {
+        this.declineTime = declineTime;
+    }
 
     public String getStatus() {
         return Status;

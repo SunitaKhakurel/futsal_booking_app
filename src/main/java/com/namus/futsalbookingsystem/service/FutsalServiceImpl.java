@@ -16,9 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class FutsalServiceImpl implements FutsalService {
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+
     @Autowired
     FutsalRepository futsalRepository;
 
@@ -29,11 +33,11 @@ public class FutsalServiceImpl implements FutsalService {
     BookingInfoRepository bookingInfoRepository;
     @Autowired
     RegisterTeamRepository registerTeamRepository;
+
     @Override
     public void saveFutsal(Futsal futsal) {
 
         futsalRepository.save(futsal);
-
     }
 
     @Override
@@ -41,6 +45,30 @@ public class FutsalServiceImpl implements FutsalService {
 
         return futsalRepository.findAll();
     }
+
+    @Override
+    public void updateFutsalDetails(Futsal futsal, long phone) {
+        Futsal futsal1=getFutsalByPhoneNumber(phone);
+        if(futsal1!=null){
+            futsal1.setFutsalName(futsal.getFutsalName());
+            futsal1.setEmail(futsal.getEmail());
+            futsal1.setOpeningTime(futsal.getOpeningTime());
+            futsal1.setClosingTime(futsal.getClosingTime());
+            futsal1.setAddress(futsal1.getAddress());
+            futsal1.setPrice(futsal.getPrice());
+            futsal1.setImage(futsal.getImage());
+            futsal1.setService(futsal.getService());
+            futsalRepository.save(futsal1);
+        }
+    }
+
+    @Override
+    public void deleteFutsal(long phone) {
+        Futsal futsal=getFutsalByPhoneNumber(phone);
+
+        futsalRepository.deleteById(futsal.getId());
+    }
+
 
     @Override
     public Futsal getFutsalByPhoneNumber(long phone) {
@@ -54,29 +82,9 @@ public class FutsalServiceImpl implements FutsalService {
         return futsal.orElse(null);
     }
 
-    @Override
-    public void updateFutsalDetails(Futsal futsal, long phone) {
-       Futsal futsal1=getFutsalByPhoneNumber(phone);
-       if(futsal1!=null){
-           futsal1.setFutsalName(futsal.getFutsalName());
-           futsal1.setEmail(futsal.getEmail());
-           futsal1.setOpeningTime(futsal.getOpeningTime());
-           futsal1.setClosingTime(futsal.getClosingTime());
-           futsal1.setAddress(futsal1.getAddress());
-           futsal1.setPrice(futsal.getPrice());
-           futsal1.setImage(futsal.getImage());
-           futsal1.setService(futsal.getService());
-           futsalRepository.save(futsal1);
 
-       }
-    }
 
-    @Override
-    public void deleteFutsal(long phone) {
-        Futsal futsal=getFutsalByPhoneNumber(phone);
 
-        futsalRepository.deleteById(futsal.getId());
-    }
 
     @Override
     public void addEvent(Events event) {
@@ -162,12 +170,41 @@ public class FutsalServiceImpl implements FutsalService {
         List<BookingInfo> bookingInfoList=bookingInfoRepository.getByContact(phone);
 
         List<BookingInfo> acceptedBookings = bookingInfoList.stream()
-                .filter(bookingInfo -> "Accepted".equals(bookingInfo.getStatus())) // Assuming the status is a String
+                .filter(bookingInfo -> "Accepted".equals(bookingInfo.getStatus()) ||
+                        "Declined".equals(bookingInfo.getStatus())) // Assuming the status is a String
                 .collect(Collectors.toList());
 
 // Sort the filtered list by id in reverse order
         Collections.sort(acceptedBookings, Comparator.comparingInt(BookingInfo::getId).reversed());
         return acceptedBookings;
+    }
+
+    @Override
+    public void updateAvailableTimeListAfterDecline(BookingInfo bookingInfo) {
+        Optional<Futsal> futsals=futsalRepository.findByFutsalName(bookingInfo.getFutsalName());
+        List<String> bookingTimelist=bookingInfo.getBookingTimeList();
+        Futsal futsal=futsals.orElse(null);
+        if(futsal!=null){
+            List<String> availableTimeList=futsal.getAvailableTimeList();
+            availableTimeList.addAll(bookingTimelist);
+            Collections.sort(availableTimeList,new TimeStringComparator());
+            futsal.setAvailableTimeList(availableTimeList);
+            futsalRepository.save(futsal);
+        }
+    }
+
+    static class TimeStringComparator implements Comparator<String> {
+        @Override
+        public int compare(String timeString1, String timeString2) {
+            LocalTime localTime1 = parseTimeString(timeString1);
+            LocalTime localTime2 = parseTimeString(timeString2);
+            return localTime1.compareTo(localTime2);
+        }
+
+        private LocalTime parseTimeString(String timeString) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a");
+            return LocalTime.parse(timeString.toUpperCase(), formatter);
+        }
     }
 
     @Override
@@ -179,7 +216,36 @@ public class FutsalServiceImpl implements FutsalService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // Run at midnight every day
+    @Override
+    public List<BookingInfo> getAcceptedDeclinedBookingInfo(Long phone) {
+        List<BookingInfo> bookingInfoList=bookingInfoRepository.getByContact(phone);
+        List<BookingInfo> Bookings = bookingInfoList.stream()
+                .filter(bookingInfo -> "Accepted".equals(bookingInfo.getStatus()) ||
+                        "Pending".equals(bookingInfo.getStatus())) // Assuming the status is a String
+                .collect(Collectors.toList());
+
+// Sort the filtered list by id in reverse order
+        Collections.sort(Bookings, Comparator.comparingInt(BookingInfo::getId).reversed());
+        return Bookings;
+
+    }
+
+    @Override
+    public boolean isTimeBefore(String timeString, String compareTime) {
+        LocalTime time = LocalTime.parse(timeString, timeFormatter);
+        LocalTime compareLocalTime = LocalTime.parse(compareTime, timeFormatter);
+        return time.isBefore(compareLocalTime);
+    }
+
+    @Override
+    public void deleteBookings(int id) {
+        BookingInfo bookingInfo=bookingInfoRepository.getById(id);
+        if(bookingInfo!=null) {
+            bookingInfoRepository.deleteById(bookingInfo.getId());
+        }
+    }
+
+    @Scheduled(cron = "0 45 10 * * *") // Run at midnight every day
     public void resetAvailableTimeList() {
         // Retrieve all Futsal entities
         List<Futsal> allFutsals = futsalRepository.findAll();
